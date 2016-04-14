@@ -1,0 +1,64 @@
+subprojects {
+    apply plugin: 'eclipse'
+    apply plugin: 'java'
+
+    // 全ソースがUTF-8であることを指定する、
+    // この記述であればsourceSetが増えても対応可能。
+    def defaultEncoding = 'UTF-8'
+    tasks.withType(JavaCompile) {
+        options.encoding = defaultEncoding
+    }
+
+    // コンパイル対象バージョンの指定
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
+
+    // version指定
+    version = '0.0.1-SNAPSHOT'
+
+    repositories {
+        mavenCentral()
+    }
+
+    // 全てのprojectで設定される依存性
+    dependencies {
+        compile 'org.projectlombok:lombok:1.16.8'
+        testCompile 'junit:junit:4.12'
+    }
+}
+
+project(':module-core') {
+}
+
+project(':module-core-export') {
+    // 個々のprojectでのみ必要な依存性
+    // 他のprojectの依存性も設定可能であり、eclipseの.classpathファイルにも反映される。
+    dependencies {
+        compile project(':module-core')
+    }
+}
+
+project(':module-core-import') {
+    dependencies {
+        compile project(':module-core')
+    }
+}
+
+project(':module-export-foo') {
+    dependencies {
+        compile project(':module-core-export')
+        compile 'org.apache.commons:commons-lang3:3.4'
+    }
+}
+
+project(':module-import-bar') {
+    dependencies {
+        compile project(':module-core-import')
+    }
+}
+
+// 正常実行確認用
+task hello << {
+    println "hello"
+}
+

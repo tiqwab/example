@@ -1,0 +1,7 @@
+rootProject.name = 'gradle-multi-example'
+include 'module-core'
+include 'module-core-export'
+include 'module-core-import'
+include 'module-export-foo'
+include 'module-import-bar'
+

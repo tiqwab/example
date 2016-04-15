@@ -45,6 +45,9 @@ project(':module-core-import') {
 }
 
 project(':module-export-foo') {
+    apply plugin: 'application'
+    mainClassName = 'org.tiqwab.example.gradle.multi.BatMainExport'
+
     dependencies {
         compile project(':module-core-export')
         compile 'org.apache.commons:commons-lang3:3.4'
@@ -52,6 +55,9 @@ project(':module-export-foo') {
 }
 
 project(':module-import-bar') {
+    apply plugin: 'application'
+    mainClassName = 'org.tiqwab.example.gradle.multi.BatMainImport'
+
     dependencies {
         compile project(':module-core-import')
     }

@@ -68,3 +68,56 @@ task hello << {
     println "hello"
 }
 
+// buildBatタスクで作成されるdirectoryを消去する。
+task clean {
+    doLast {
+        delete 'build'
+    }
+}
+
+// bat実行用にbuild
+task buildBat << {
+    // build先のdirectory作成
+    // gradle.propertiesで定義しているdot表記のproperties取得は要注意
+    def batDir = rootProject.properties['build.bat.dir']
+    def baseDir = rootProject.properties['build.base.dir']
+    copy {
+        from "${baseDir}"
+        into "${batDir}"
+        exclude '**/*.bat'
+        exclude '**/*.sh'
+        includeEmptyDirs = true
+    }
+
+    // 依存libraryと各modleのcopy
+    def libDir = rootProject.properties['build.lib.dir']
+    def deps = []
+    subprojects.each { p ->
+        p.configurations.compile.each { dep ->
+            if (!deps.contains(dep)) {
+                deps << dep
+            }
+        }
+        def archiveJarPath = p.jar.archivePath
+        if (!deps.contains(archiveJarPath)) {
+            deps << archiveJarPath 
+        }
+    }
+    copy {
+        from files(deps)
+        into libDir
+    }
+
+    // 各moduleの実行用batファイルのcopy
+    def binDir = rootProject.properties['build.bin.dir']
+    subprojects.each {p ->
+        def scriptsPath = p.buildDir.toPath().resolve('scripts').toFile()
+        if (scriptsPath.exists()) {
+            copy {
+                from scriptsPath
+                into binDir
+            }
+        }
+    }
+}
+

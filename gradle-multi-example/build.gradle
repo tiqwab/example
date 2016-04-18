@@ -47,6 +47,7 @@ project(':module-core-import') {
 project(':module-export-foo') {
     apply plugin: 'application'
     mainClassName = 'org.tiqwab.example.gradle.multi.BatMainExport'
+    project.ext['scriptType'] = 'export'
 
     dependencies {
         compile project(':module-core-export')
@@ -57,15 +58,11 @@ project(':module-export-foo') {
 project(':module-import-bar') {
     apply plugin: 'application'
     mainClassName = 'org.tiqwab.example.gradle.multi.BatMainImport'
+    project.ext['scriptType'] = 'import'
 
     dependencies {
         compile project(':module-core-import')
     }
-}
-
-// 正常実行確認用
-task hello << {
-    println "hello"
 }
 
 // buildBatタスクで作成されるdirectoryを消去する。
@@ -75,15 +72,15 @@ task clean {
     }
 }
 
-// bat実行用にbuild
-task buildBat << {
+// カスタムbuild
+task buildScript << {
     // build先のdirectory作成
     // gradle.propertiesで定義しているdot表記のproperties取得は要注意
-    def batDir = rootProject.properties['build.bat.dir']
+    def scriptDir = rootProject.properties['build.script.dir']
     def baseDir = rootProject.properties['build.base.dir']
     copy {
         from "${baseDir}"
-        into "${batDir}"
+        into "${scriptDir}"
         exclude '**/*.bat'
         exclude '**/*.sh'
         includeEmptyDirs = true
@@ -108,16 +105,23 @@ task buildBat << {
         into libDir
     }
 
-    // 各moduleの実行用batファイルのcopy
+    // 各moduleの実行用スクリプトファイルの作成
+    def baseBinDir = rootProject.properties['build.base.bin.dir']
     def binDir = rootProject.properties['build.bin.dir']
-    subprojects.each {p ->
-        def scriptsPath = p.buildDir.toPath().resolve('scripts').toFile()
-        if (scriptsPath.exists()) {
+    def execLibDir = rootProject.properties['exec.lib.dir']
+    subprojects.each { p ->
+        if (p.plugins.hasPlugin('application')) {
+            def classPath = [p.jar.archivePath] + p.configurations.compile
             copy {
-                from scriptsPath
+                from baseBinDir
                 into binDir
+                include "**/${p.ext.scriptType}.sh"
+                rename '.*\\.sh', p.name + '.sh' 
+                expand(
+                    mainClassName: p.mainClassName,
+                    classPath: classPath.collect{x -> "${execLibDir}/${x.name}"}.join(':')
+                )
             }
         }
     }
 }
-

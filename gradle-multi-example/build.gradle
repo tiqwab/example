@@ -65,19 +65,19 @@ project(':module-import-bar') {
     }
 }
 
-// buildBatタスクで作成されるdirectoryを消去する。
+// buildScriptタスクで作成されるdirectoryを消去する。
 task clean {
     doLast {
         delete 'build'
     }
 }
 
-// カスタムbuild
+// カスタムbuildタスク
 task buildScript << {
     // build先のdirectory作成
     // gradle.propertiesで定義しているdot表記のproperties取得は要注意
-    def scriptDir = rootProject.properties['build.script.dir']
-    def baseDir = rootProject.properties['build.base.dir']
+    def scriptDir = rootProject.properties['build.dir']
+    def baseDir = rootProject.properties['base.dir']
     copy {
         from "${baseDir}"
         into "${scriptDir}"
@@ -106,7 +106,7 @@ task buildScript << {
     }
 
     // 各moduleの実行用スクリプトファイルの作成
-    def baseBinDir = rootProject.properties['build.base.bin.dir']
+    def baseBinDir = rootProject.properties['base.bin.dir']
     def binDir = rootProject.properties['build.bin.dir']
     def execLibDir = rootProject.properties['exec.lib.dir']
     subprojects.each { p ->

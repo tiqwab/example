@@ -1,0 +1,17 @@
+group 'org.tiqwab'
+version '1.0-SNAPSHOT'
+
+apply plugin: 'java'
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile group: 'org.bitbucket.fwilhelm', name: 'org.jenetics', version: '3.6.0'
+    compile group: 'org.slf4j', name: 'slf4j-api', version: '1.7.22'
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.1.8'
+    testCompile group: 'junit', name: 'junit', version: '4.11'
+}

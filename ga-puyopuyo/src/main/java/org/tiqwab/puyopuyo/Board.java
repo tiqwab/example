@@ -39,11 +39,11 @@ public class Board {
     }
 
     public int sizeX() {
-        return board.length;
+        return board[0].length;
     }
 
     public int sizeY() {
-        return board[0].length;
+        return board.length;
     }
 
     @Override

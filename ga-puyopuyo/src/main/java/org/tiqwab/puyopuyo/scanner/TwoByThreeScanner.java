@@ -1,18 +1,29 @@
 package org.tiqwab.puyopuyo.scanner;
 
-import org.tiqwab.puyopuyo.Board;
-import org.tiqwab.puyopuyo.Puyo;
-import org.tiqwab.puyopuyo.checker.BlockChecker;
+import org.tiqwab.puyopuyo.checker.*;
 
+import java.util.Arrays;
 import java.util.List;
 
 /**
  * Created by nm on 1/18/17.
+ * + +
+ * + +
+ * + +
  */
 public class TwoByThreeScanner extends BoardScannerBase {
 
     public TwoByThreeScanner(List<BlockChecker> checkers) {
         super(2, 3, checkers);
+    }
+
+    public static TwoByThreeScanner newDefaultInstance() {
+        List<BlockChecker> checkers = Arrays.asList(
+                new L1Checker(), new L2Checker(), new L3Checker(), new L4Checker(),
+                new Td1Checker(), new Td2Checker(),
+                new Zd1Checker(), new Zd2Checker()
+        );
+        return new TwoByThreeScanner(checkers);
     }
 
     @Override

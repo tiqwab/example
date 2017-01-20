@@ -32,10 +32,10 @@ public class Solver {
         System.out.println(board);
     }
 
-    public void cycle() {
+    public Board cycle() {
         for (BoardScanner scanner : this.scanners) {
             scanner.scan(this.board);
         }
-        this.board = this.board.delete().inverse().clean().inverse();
+        return this.board.delete().inverse().clean().inverse();
     }
 }

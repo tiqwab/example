@@ -12,30 +12,18 @@ import java.util.List;
 public class Solver {
 
     private final List<BoardScanner> scanners;
-    private Board board;
+    private final Stage stage;
 
-    public Solver(Board board, List<BoardScanner> scanners) {
-        this.board = board;
+    public Solver(Stage stage, List<BoardScanner> scanners) {
+        this.stage = stage;
         this.scanners = scanners;
     }
 
-    public static void main(String[] args) throws Exception {
-        int[][] colors = {
-                {1, 2, 2, 2},
-                {1, 3, 3, 3},
-                {1, 1, 2, 2},
-                {1, 1, 3, 3}
-        };
-
-        Board board = new Board(colors);
-
-        System.out.println(board);
+    public Board cycle() {
+        return this.stage.cycle(this.scanners);
     }
 
-    public Board cycle() {
-        for (BoardScanner scanner : this.scanners) {
-            scanner.scan(this.board);
-        }
-        return this.board.delete().inverse().clean().inverse();
+    public CycleResult cycles() {
+        return stage.cycles(this.scanners);
     }
 }

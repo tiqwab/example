@@ -30,6 +30,16 @@ public class Board {
         }
     }
 
+    public Board(Board b) {
+        this.board = new Puyo[b.board.length][];
+        for (int i = 0; i < this.board.length; i++) {
+            this.board[i] = new Puyo[b.board[0].length];
+            for (int j = 0; j < this.board[i].length; j++) {
+                this.board[i][j] = new Puyo(b.board[i][j]);
+            }
+        }
+    }
+
     public Board(Puyo[][] puyos) {
         this.board = puyos;
     }
@@ -134,12 +144,32 @@ public class Board {
 
     public void checkPuyos(Point[] points) {
         List<Puyo> puyos = Arrays.stream(points).map(p -> this.get(p.x, p.y)).collect(Collectors.toList());
-        logger.debug("try check: " + Arrays.toString(points));
+        // logger.debug("try check: " + Arrays.toString(points));
         if (Puyo.eauqlAll(puyos)) {
-            logger.debug("Equal!");
+            // logger.debug("Equal!");
             for (int i = 0; i < points.length; i++) {
                 this.board[points[i].y][points[i].x] = this.board[points[i].y][points[i].x].willDelete();
             }
         }
+    }
+
+    public boolean isAllEmpty() {
+        for (int i = 0; i < this.board.length; i++) {
+            for (int j = 0; j < this.board[i].length; j++) {
+                if (!this.board[i][j].deleted()) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public Board hideRow(int rowInd) {
+       Board b = new Board(this);
+        for (int i = 0; i < b.board[rowInd].length; i++) {
+            Puyo puyo = b.board[rowInd][i];
+            b.board[rowInd][i] = new Puyo(puyo.getColor() * -1, puyo.willBeDeleted());
+        }
+        return b;
     }
 }

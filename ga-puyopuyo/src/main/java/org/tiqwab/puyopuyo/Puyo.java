@@ -47,7 +47,7 @@ public class Puyo {
     public static boolean eauqlAll(List<Puyo> puyos) {
         final int max = puyos.stream().map(p -> p.color).max(Integer::compareTo).orElseThrow(RuntimeException::new);
         final int min = puyos.stream().map(p -> p.color).min(Integer::compareTo).orElseThrow(RuntimeException::new);
-        return max == min;
+        return (max > 0) && max == min;
     }
 
     @Override

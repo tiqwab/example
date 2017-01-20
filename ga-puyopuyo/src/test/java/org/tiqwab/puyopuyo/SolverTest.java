@@ -1,8 +1,6 @@
 package org.tiqwab.puyopuyo;
 
 import org.junit.Test;
-import org.tiqwab.puyopuyo.checker.L1Checker;
-import org.tiqwab.puyopuyo.checker.L2Checker;
 import org.tiqwab.puyopuyo.scanner.*;
 
 import java.util.Arrays;
@@ -28,9 +26,9 @@ public class SolverTest {
                 { 1, 1, 2, 2, 2, 9, },
                 { 1, 9, 9, 8, 2, 9, },
         };
-        Board board = new Board(colors);
+        Stage stage = new Stage(colors);
         List<BoardScanner> scanners = Arrays.asList(TwoByThreeScanner.newDefaultInstance());
-        Solver solver = new Solver(board, scanners);
+        Solver solver = new Solver(stage, scanners);
 
         // exercise
         Board actual = solver.cycle();
@@ -61,9 +59,9 @@ public class SolverTest {
                 { 1, 1, 2, 2, 9, 1, 2, 2, 2 },
                 { 9, 1, 1, 9, 1, 1, 1, 2, 8 },
         };
-        Board board = new Board(colors);
+        Stage stage = new Stage(colors);
         List<BoardScanner> scanners = Arrays.asList(ThreeByTwoScanner.newDefaultInstance());
-        Solver solver = new Solver(board, scanners);
+        Solver solver = new Solver(stage, scanners);
 
         // exercise
         Board actual = solver.cycle();
@@ -89,9 +87,9 @@ public class SolverTest {
                 { 2, 2, 1, 1 },
                 { 2, 2, 9, 9 },
         };
-        Board board = new Board(colors);
+        Stage stage = new Stage(colors);
         List<BoardScanner> scanners = Arrays.asList(TwoByTwoScanner.newDefaultInstance());
-        Solver solver = new Solver(board, scanners);
+        Solver solver = new Solver(stage, scanners);
 
         // exercise
         Board actual = solver.cycle();
@@ -114,9 +112,9 @@ public class SolverTest {
                 { 8, 8, 9, 9 },
                 { 1, 1, 1, 1 },
         };
-        Board board = new Board(colors);
+        Stage stage = new Stage(colors);
         List<BoardScanner> scanners = Arrays.asList(FourByOneScanner.newDefaultInstance());
-        Solver solver = new Solver(board, scanners);
+        Solver solver = new Solver(stage, scanners);
 
         // exercise
         Board actual = solver.cycle();
@@ -140,9 +138,9 @@ public class SolverTest {
                 { 1, 8, 9, 8 },
                 { 1, 8, 9, 8 },
         };
-        Board board = new Board(colors);
+        Stage stage = new Stage(colors);
         List<BoardScanner> scanners = Arrays.asList(OneByFourScanner.newDefaultInstance());
-        Solver solver = new Solver(board, scanners);
+        Solver solver = new Solver(stage, scanners);
 
         // exercise
         Board actual = solver.cycle();
@@ -156,5 +154,39 @@ public class SolverTest {
         };
         Board expected = new Board(expectedColors);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    public void cyclesTest() {
+        // setup
+        final int[][] colors = {
+                { 1, 2, 0, 0, 2, 2 },
+                { 1, 1, 1, 3, 2, 1 },
+                { 3, 1, 2, 2, 3, 2 },
+                { 1, 2, 3, 3, 2, 1 },
+                { 2, 3, 2, 1, 3, 1 },
+                { 3, 2, 1, 3, 2, 1 },
+                { 2, 3, 2, 1, 3, 2 },
+                { 2, 3, 2, 1, 3, 2 },
+                { 2, 1, 1, 3, 2, 3 },
+                { 1, 2, 3, 1, 3, 3 },
+                { 3, 1, 2, 3, 1, 2 },
+                { 3, 1, 2, 3, 1, 2 },
+                { 3, 1, 2, 3, 1, 2 },
+        };
+        Stage stage = new Stage(colors, colors.length - 1);
+        List<BoardScanner> scanners = Arrays.asList(
+                OneByFourScanner.newDefaultInstance(), FourByOneScanner.newDefaultInstance(),
+                TwoByThreeScanner.newDefaultInstance(), ThreeByTwoScanner.newDefaultInstance(),
+                TwoByTwoScanner.newDefaultInstance()
+        );
+        Solver solver = new Solver(stage, scanners);
+
+        // exercise
+        CycleResult cr = solver.cycles();
+
+        // verify
+        assertTrue(cr.board.isAllEmpty());
+        assertEquals(19, cr.chainInfo.chainCount);
     }
 }

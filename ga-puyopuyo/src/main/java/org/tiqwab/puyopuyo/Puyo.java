@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 
 /**
- * Created by nm on 1/18/17.
+ * Immutable class representing puyopuyo blocks.
  */
 public class Puyo {
 

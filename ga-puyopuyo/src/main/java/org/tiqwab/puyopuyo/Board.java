@@ -92,7 +92,7 @@ public class Board {
 
     /**
      * Not generate all puyos, but reuse.
-     * @return
+     * @return an inversed board
      */
     public Board inverse() {
         final Puyo[][] puyos = new Puyo[this.board[0].length][];
@@ -107,7 +107,7 @@ public class Board {
 
     /**
      * Not generate all puyos, but reuse.
-     * @return
+     * @return a board where zeros are moved to the right side.
      */
     public Board clean() {
         Puyo[][] cleaned = new Puyo[this.board.length][];

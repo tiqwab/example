@@ -86,7 +86,7 @@ public class BoardTest {
         board.willDelete(2, 2); board.willDelete(2, 3); board.willDelete(3, 3); board.willDelete(3, 4);
 
         // exercise
-        Board actual = board.delete();
+        board.delete();
 
         // verify
         Board expected = new Board(new int[][] {
@@ -96,7 +96,7 @@ public class BoardTest {
                 { 0, 2, 0, 0 },
                 { 0, 2, 3, 0 },
         });
-        assertEquals(expected, actual);
+        assertEquals(expected, board);
     }
 
 }

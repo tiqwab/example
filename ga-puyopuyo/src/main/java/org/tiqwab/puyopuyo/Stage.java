@@ -33,7 +33,7 @@ public class Stage {
         for (BoardScanner scanner : scanners) {
             scanner.scan(this.board);
         }
-        this.board = this.board.delete();
+        this.board.delete();
         for (int i = 0; i < this.board.sizeY() - this.stageH; i++) {
             this.board = this.board.hideRow(i);
         }

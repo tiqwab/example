@@ -43,7 +43,7 @@ public class Stage {
 
     public CycleResult cycles(List<BoardScanner> scanners) {
         int cycleCount = 0;
-        logger.debug("{}: \n{}", cycleCount, this.board.toString());
+        // logger.debug("{}: \n{}", cycleCount, this.board.toString());
         while (true) {
             Board prev = new Board(this.board);
             cycle(scanners);
@@ -51,7 +51,7 @@ public class Stage {
                 break;
             }
             cycleCount += 1;
-            logger.debug("{}: \n{}", cycleCount, this.board.toString());
+            // logger.debug("{}: \n{}", cycleCount, this.board.toString());
         }
         return new CycleResult(this.board, new ChainInfo(cycleCount));
     }

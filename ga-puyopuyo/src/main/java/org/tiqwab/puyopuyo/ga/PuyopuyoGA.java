@@ -1,9 +1,7 @@
 package org.tiqwab.puyopuyo.ga;
 
-import org.jenetics.Chromosome;
-import org.jenetics.Genotype;
-import org.jenetics.IntegerChromosome;
-import org.jenetics.IntegerGene;
+import ch.qos.logback.classic.Level;
+import org.jenetics.*;
 import org.jenetics.engine.Engine;
 import org.jenetics.engine.EvolutionResult;
 import org.jenetics.util.Factory;
@@ -36,7 +34,7 @@ public class PuyopuyoGA {
 
     private static Integer puyopuyoEvaluator(Genotype<IntegerGene> gt) {
         int[][] colors = convertGenotypeToColors(gt);
-        Stage stage = new Stage(colors);
+        Stage stage = new Stage(colors, colors.length - 1);
         Solver solver = new Solver(stage, scanners);
         CycleResult cr = solver.cycles();
         return cr.chainInfo.chainCount;
@@ -63,19 +61,22 @@ public class PuyopuyoGA {
     }
 
     public static void main(String[] args) throws Exception {
+        ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        rootLogger.setLevel(Level.INFO/*DEBUG*/);
         Factory<Genotype<IntegerGene>> gtf = Genotype.of(
                 Stream.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).map(x -> IntegerChromosome.of(1, 3, 6)).collect(Collectors.toList())
         );
 
         Engine<IntegerGene, Integer> engine = Engine
                 .builder(PuyopuyoGA::puyopuyoEvaluator, gtf)
+                .alterers(new SinglePointCrossover<>(SinglePointCrossover.DEFAULT_ALTER_PROBABILITY), new Mutator<>(Mutator.DEFAULT_ALTER_PROBABILITY))
                 .build();
 
         Genotype<IntegerGene> result = engine.stream()
-                .limit(200)
+                .limit(2000)
                 .peek(gt -> {
                     double avg = gt.getPopulation().stream().map(x -> x.getFitness()).collect(Collectors.averagingDouble(x -> x));
-                    logger.debug("{} -> Min: {}, Max: {}, Avg: {}", gt.getGeneration(), gt.getWorstFitness(), gt.getBestFitness(), avg);
+                    logger.info("{} -> Min: {}, Max: {}, Avg: {}", gt.getGeneration(), gt.getWorstFitness(), gt.getBestFitness(), avg);
                 })
                 .collect(EvolutionResult.toBestGenotype());
 

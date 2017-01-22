@@ -17,6 +17,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 /**
@@ -64,12 +65,12 @@ public class PuyopuyoGA {
         ch.qos.logback.classic.Logger rootLogger = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         rootLogger.setLevel(Level.INFO/*DEBUG*/);
         Factory<Genotype<IntegerGene>> gtf = Genotype.of(
-                Stream.of(0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12).map(x -> IntegerChromosome.of(1, 3, 6)).collect(Collectors.toList())
+                IntStream.range(0, 13).mapToObj(x -> IntegerChromosome.of(1, 3, 6)).collect(Collectors.toList())
         );
 
         Engine<IntegerGene, Integer> engine = Engine
                 .builder(PuyopuyoGA::puyopuyoEvaluator, gtf)
-                .alterers(new SinglePointCrossover<>(SinglePointCrossover.DEFAULT_ALTER_PROBABILITY), new Mutator<>(Mutator.DEFAULT_ALTER_PROBABILITY))
+                .alterers(new MultiPointCrossover<>(MultiPointCrossover.DEFAULT_ALTER_PROBABILITY), new Mutator<>(Mutator.DEFAULT_ALTER_PROBABILITY))
                 .build();
 
         Genotype<IntegerGene> result = engine.stream()

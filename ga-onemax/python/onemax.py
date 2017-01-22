@@ -3,6 +3,7 @@ from random import randint, random
 class Gene:
     def __init__(self, allele):
         assert isinstance(allele, int)
+        assert allele == 0 or allele == 1
         self.allele = allele
 
     def mutate(self, mutator):
@@ -93,13 +94,13 @@ class Population:
         '''
         return [x.mutate(self.mutator) for x in chroms]
 
-    def cycle(self, chroms):
+    def cycle(self, chroms, cycle_no):
         '''
         Generate new chromosomes from the given ones through the selection.
         '''
         # evaluate
         generation = self.evaluate(chroms)
-        print(self.take_stat(generation))
+        print(self.take_stat(generation, cycle_no))
         # select
         selected, elites = self.select(generation)
         # mate
@@ -115,19 +116,21 @@ class Population:
         chroms  = [Chromosome.generate(self.mutator, self.gene_size) \
                 for x in range(0, self.pop_size)]
         for i in range(0, count):
-           chroms = self.cycle(chroms)
-        return chroms
+           chroms = self.cycle(chroms, i+1)
+        result_generation = self.evaluate(chroms)
+        return sorted(result_generation, key=lambda x: x.fitness)[-1]
 
-    def take_stat(self, generation):
+    def take_stat(self, generation, cycle_no):
         '''
         Return statistics (Min, Max, Avg of fitnesses) in the generation.
         '''
         sorted_gen = sorted(generation, key=lambda x: x.fitness)
         average_fit = sum([x.fitness for x in generation]) / len(generation)
-        return "Min: %s -> %d, Max: %s -> %d, Avg: %f" % \
-                (sorted_gen[0].chrom, sorted_gen[0].fitness, \
-                sorted_gen[-1].chrom, sorted_gen[-1].fitness, \
-                average_fit)
+        return "%d -> Min: %d, Max: %d, Avg: %f" % \
+                (cycle_no, \
+                 sorted_gen[0].fitness, \
+                 sorted_gen[-1].fitness, \
+                 average_fit)
 
 class Mutator:
     '''
@@ -212,4 +215,5 @@ def onemax_mater(pts, prob):
 if __name__ == '__main__':
     pop = Population(10, 20, Mutator(onemax_randomizer, 0.01), \
             onemax_evaluator, onemax_selector, Incubator(onemax_mater, 0.8))
-    pop.evolve(100)
+    result = pop.evolve(100)
+    print("Best result: ", result)

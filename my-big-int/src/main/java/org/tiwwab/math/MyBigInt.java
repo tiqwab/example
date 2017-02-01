@@ -3,29 +3,6 @@ package org.tiwwab.math;
 import java.math.BigInteger;
 import java.util.Arrays;
 
-/**
- * BigInteger
- *
- * - int[] magとint signumで整数を表す
- * - magにはbig-endian方式で値が入る。つまり数字を文字列で表記したときに上部のもの(左側のもの)が配列上先頭に(小さいindexへ)入る。
- * - magの基数は2^32
- * - (Javaのintは32bit, longは64bitと仕様で決められており、処理系には依存しない)
- * - (Javaのprimitiveな整数型は2の補数表現で値が保持される)
- *
- * l495. BigInteger(char[] val, int sign, int len)
- *       一番考えやすいコンストラクタなのでこれをまず見る
- * l515. 渡された値がbitで表して何桁になるか。
- *       渡された数が10進数なら(その桁数 x log10 / log2)の整数値への切り上げで2進数での桁数が求められる。
- *       ここでは何故かbitsPerDigit[10]から(log10 / log2 * 2^10)の値をもらってきて、そのあとに右に10シフトするという動きをしている。
- * l516. 2^Integer.MAX_VALUEより大きくなるならエラーということかな
- * l519. int[]という配列で値を持つが、その配列の大きさはいくつになるか
- * l527. 上位の桁に当たるものをmag[]の末尾にセットする。
- *       (最終的にはbig-endian方式で値を格納するが、まずは末尾にいれ、あとで基数をかけながら先頭に移動していくイメージ)。
- *       Integer.MAX_VALUEは10桁だが、ここでのdigitsPerInt[10]は9。
- * l530. 残りのmag[]にあたるものを入れていく。
- *       このとき、すでにmagに入っているものは基数をかけながら先頭にずれていく。
- *       2^32より大きくなった値は繰り上がりする。
- */
 public class MyBigInt {
 
     public static void main(String[] args) throws Exception {
@@ -47,6 +24,54 @@ public class MyBigInt {
         System.out.println("cast to long         : " + Long.toBinaryString((long) a));
         System.out.println("LONG_MASK as binary  : " + Long.toBinaryString(LONG_MASK));
         System.out.println("cast to long and mask: " + Long.toBinaryString(a & LONG_MASK));
+
+        System.out.println();
+
+        MyBigInt mb3 = MyBigInt.valueOf("1000000000000000", 10);
+        MyBigInt mb4 = MyBigInt.valueOf("2000020000200000", 10);
+        System.out.println(mb3.add(mb4).repr());
+
+        BigInteger b4 = new BigInteger("1000000000000000");
+        BigInteger b5 = new BigInteger("2000020000200000");
+        BigInteger b6 = b4.add(b5); // mag=[698496, -1771154112]
+        System.out.println(b6);
+        System.out.println(Integer.toString(Integer.MAX_VALUE));
+
+        System.out.println();
+
+        // add
+        MyBigInt mb5 = MyBigInt.valueOf("2147483647", 10);
+        for (int i = 0; i < 4; i++) {
+            mb5 = mb5.add(MyBigInt.valueOf("2147483647", 10));
+        }
+        System.out.println(mb5.repr());
+
+        BigInteger b7 = new BigInteger("2147483647");
+        for (int i = 0; i < 4; i++) {
+            b7 = b7.add(new BigInteger("2147483647"));
+        }
+        System.out.println(b7); // mag=[2, 2147483643]
+
+        System.out.println();
+
+        // subtract
+        System.out.println(mb4.subtract(mb3).repr());
+        BigInteger b8 = b5.subtract(b4);
+        System.out.println(b8); // mag=[232835, 1289835840], signum=1
+
+        System.out.println(mb3.subtract(mb4).repr());
+        BigInteger b9 = b4.subtract(b5);
+        System.out.println(b9); // mag=[232835, 1289835840], signum=-1
+
+        for (int i = 0; i < 4; i++) {
+            mb5 = mb5.subtract(MyBigInt.valueOf("2147483647", 10));
+        }
+        System.out.println(mb5.repr());
+
+        for (int i = 0; i < 4; i++) {
+            b7 = b7.subtract(new BigInteger("2147483647"));
+        }
+        System.out.println(b7); // mag=[2147483647], signum=1
     }
 
     final int[] mag;
@@ -113,6 +138,210 @@ public class MyBigInt {
         int start;
         for (start = 0; start < magLen && mag[start] == 0; start++) {}
         return Arrays.copyOfRange(mag, start, magLen);
+    }
+
+    private int compareMagnitude(int[] other) {
+        final int[] m1 = this.mag;
+        final int len1 = m1.length;
+        final int[] m2 = other;
+        final int len2 = m2.length;
+
+        if (len1 > len2) {
+            return 1;
+        }
+        if (len1 < len2) {
+            return -1;
+        }
+
+        for (int i = 0; i < len1; i++) {
+            final int x1 = m1[i];
+            final int x2 = m2[i];
+            if (x1 != x2) {
+                return (x1 & LONG_MASK) > (x2 & LONG_MASK) ? 1 : -1;
+            }
+        }
+
+        return 0;
+    }
+
+    private int[] add(int[] x, int[] y) {
+        if (x.length < y.length) {
+            int[] tmp = x;
+            x = y;
+            y = tmp;
+        }
+
+        int[] result = new int[x.length+1];
+        long sum = 0;
+        long carry = 0;
+        int cursor = 0;
+
+        while (cursor < y.length) {
+            sum = (x[x.length-cursor-1] & LONG_MASK) + (y[y.length-cursor-1] & LONG_MASK) + carry;
+            result[result.length-cursor-1] = (int) sum;
+            carry = sum >>> 32;
+            cursor++;
+        }
+
+        while (cursor < x.length && carry != 0) {
+            sum = (x[x.length-cursor-1] & LONG_MASK) + carry;
+            result[result.length-cursor-1] = (int) sum;
+            carry = sum >>> 32;
+            cursor++;
+        }
+
+        while (cursor < x.length) {
+            result[result.length-cursor-1] = x[x.length-cursor-1];
+            cursor++;
+        }
+
+        if (carry > 0) {
+            result[result.length-cursor-1] = (int) carry;
+            cursor++;
+        }
+
+        return trustedStripLeadingZeroInts(result);
+    }
+
+    public MyBigInt add(MyBigInt val) {
+        if (this.signum == 0) {
+            return val;
+        }
+        if (val.signum == 0) {
+            return this;
+        }
+
+        if (this.signum == val.signum) {
+            return new MyBigInt(add(this.mag, val.mag), this.signum);
+        }
+
+        int cmp = compareMagnitude(val.mag);
+        if (cmp == 0) {
+            return new MyBigInt(new int[0], 0);
+        }
+        int[] newMag = (cmp > 0) ? subtract(this.mag, val.mag) : subtract(val.mag, this.mag);
+        newMag = trustedStripLeadingZeroInts(newMag);
+        return (cmp == this.signum) ? new MyBigInt(newMag, 1) : new MyBigInt(newMag, -1);
+    }
+
+    /**
+     * <p>
+     * Subtract y from x, assuming that x is bigger than y.
+     * @param x
+     * @param y
+     * @return
+     */
+    private int[] subtract(int[] x, int[] y) {
+        // allocate a new mag with same length as x
+        int[] result = new int[x.length];
+
+        // subtract each element
+        long sub = 0;
+        long carry = 0;
+        int cursor = 0;
+        while (cursor < y.length) {
+            sub = (x[x.length-cursor-1] & LONG_MASK) - (y[y.length-cursor-1] & LONG_MASK) + carry;
+            result[result.length-cursor-1] = (int) sub;
+            carry = sub >>> 32;
+            cursor++;
+        }
+
+        // handle carry
+        while (carry != 0 && cursor < x.length) {
+            sub = (x[x.length-cursor-1] & LONG_MASK) + carry;
+            result[result.length-cursor-1] = (int) sub;
+            carry = sub >>> 32;
+            cursor++;
+        }
+
+        while (cursor < x.length) {
+            result[result.length-cursor-1] = x[x.length-cursor-1];
+            cursor++;
+        }
+
+        result = trustedStripLeadingZeroInts(result);
+        return result;
+    }
+
+    public MyBigInt subtract(MyBigInt val) {
+        if (this.signum == 0) {
+            return val.negate();
+        }
+        if (val.signum == 0) {
+            return this;
+        }
+
+        if (this.signum != val.signum) {
+            final int[] newMag = add(this.mag, val.mag);
+            return new MyBigInt(newMag, this.signum);
+        }
+
+        int cmp = compareMagnitude(val.mag);
+        if (cmp == 0) {
+            return new MyBigInt(new int[0], 0);
+        }
+        int[] newMag = (cmp > 0) ? subtract(this.mag, val.mag) : subtract(val.mag, this.mag);
+        newMag = trustedStripLeadingZeroInts(newMag);
+        return cmp == this.signum ? new MyBigInt(newMag, 1) : new MyBigInt(newMag, -1);
+    }
+
+    /*
+    public String toString(int radix) {
+        if (signum == 0)
+            return "0";
+        if (radix < Character.MIN_RADIX || radix > Character.MAX_RADIX)
+            radix = 10;
+        return smallToString(radix);
+    }
+
+    private String smallToString(int radix) {
+        if (signum == 0) {
+            return "0";
+        }
+
+        // Compute upper bound on number of digit groups and allocate space
+        int maxNumDigitGroups = (4*mag.length + 6)/7;
+        String digitGroup[] = new String[maxNumDigitGroups];
+
+        // Translate number to string, a digit group at a time
+        BigInteger tmp = this.abs();
+        int numGroups = 0;
+        while (tmp.signum != 0) {
+            BigInteger d = longRadix[radix];
+
+            MutableBigInteger q = new MutableBigInteger(),
+                              a = new MutableBigInteger(tmp.mag),
+                              b = new MutableBigInteger(d.mag);
+            MutableBigInteger r = a.divide(b, q);
+            BigInteger q2 = q.toBigInteger(tmp.signum * d.signum);
+            BigInteger r2 = r.toBigInteger(tmp.signum * d.signum);
+
+            digitGroup[numGroups++] = Long.toString(r2.longValue(), radix);
+            tmp = q2;
+        }
+
+        // Put sign (if any) and first digit group into result buffer
+        StringBuilder buf = new StringBuilder(numGroups*digitsPerLong[radix]+1);
+        if (signum < 0) {
+            buf.append('-');
+        }
+        buf.append(digitGroup[numGroups-1]);
+
+        // Append remaining digit groups padded with leading zeros
+        for (int i=numGroups-2; i >= 0; i--) {
+            // Prepend (any) leading zeros for this digit group
+            int numLeadingZeros = digitsPerLong[radix]-digitGroup[i].length();
+            if (numLeadingZeros != 0) {
+                buf.append(zeros[numLeadingZeros]);
+            }
+            buf.append(digitGroup[i]);
+        }
+        return buf.toString();
+    }
+    */
+
+    public MyBigInt negate() {
+        return new MyBigInt(this.mag, signum * -1);
     }
 
     public String repr() {

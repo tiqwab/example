@@ -2,6 +2,7 @@ package org.tiwwab.math;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.PrimitiveIterator;
 
 public class MyBigInt {
 
@@ -72,6 +73,19 @@ public class MyBigInt {
             b7 = b7.subtract(new BigInteger("2147483647"));
         }
         System.out.println(b7); // mag=[2147483647], signum=1
+
+        System.out.println();
+
+        // multiply
+        MyBigInt mb6 = MyBigInt.valueOf("2147483647").multiply(MyBigInt.valueOf("2147483648")
+                                                     .multiply(MyBigInt.valueOf("3729467293"))
+                                                     .multiply(MyBigInt.valueOf("999231111234847372")));
+        System.out.println(mb6.repr());
+
+        BigInteger b10 = new BigInteger("2147483647").multiply(new BigInteger("2147483648")
+                                                          .multiply(new BigInteger("3729467293"))
+                                                          .multiply(new BigInteger("999231111234847372")));
+        System.out.println(b10); // mag=[50504844, 1092009086, -1270796856, 2064485906, 0]
     }
 
     final int[] mag;
@@ -283,6 +297,45 @@ public class MyBigInt {
         int[] newMag = (cmp > 0) ? subtract(this.mag, val.mag) : subtract(val.mag, this.mag);
         newMag = trustedStripLeadingZeroInts(newMag);
         return cmp == this.signum ? new MyBigInt(newMag, 1) : new MyBigInt(newMag, -1);
+    }
+
+    private int[] multiply(int[] bigger, int[] smaller) {
+        int[] result = new int[bigger.length + smaller.length];
+
+        long mult = 0;
+        long carry = 0;
+        for (int s = 0; s < smaller.length; s++) {
+            for (int b = 0; b < bigger.length; b++) {
+                mult = (smaller[smaller.length-s-1] & LONG_MASK) * (bigger[bigger.length-b-1] & LONG_MASK) + carry;
+                result[result.length - 1 - b - s] = (int) ((result[result.length - 1 - b - s] & LONG_MASK) + mult);
+                carry = mult >>> 32;
+            }
+            int cursor = 0;
+            while (carry != 0) {
+                mult = (result[result.length - 1 - bigger.length - s - cursor] & LONG_MASK) + carry;
+                result[result.length - 1 - bigger.length - s] = (int) mult;
+                carry = mult >>> 32;
+                cursor++;
+            }
+        }
+
+        result = trustedStripLeadingZeroInts(result);
+        return result;
+    }
+
+    public MyBigInt multiply(MyBigInt val) {
+        // return zero if either of MyBigInt is zero
+        if (this.signum == 0 || val.signum == 0) {
+            return new MyBigInt(new int[0], 0);
+        }
+
+        // compare this and val
+        int cmp = compareMagnitude(val.mag);
+
+        // calc new mag
+        int[] newMag = (cmp > 0) ? multiply(this.mag, val.mag) : multiply(val.mag, this.mag);
+
+        return (this.signum == val.signum) ? new MyBigInt(newMag, 1) : new MyBigInt(newMag, -1);
     }
 
     /*

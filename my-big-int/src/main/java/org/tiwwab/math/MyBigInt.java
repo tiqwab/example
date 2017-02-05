@@ -91,7 +91,7 @@ public class MyBigInt {
     final int[] mag;
     final int signum;
 
-    private static final long LONG_MASK = 0xffffffffL;
+    static final long LONG_MASK = 0xffffffffL;
 
     private static final int[] digitsPerInt = { 0, 0, /*two*/ 30, 0, 0, 0, 0, 0, 0, 0, /*ten*/ 9 };
     private static final int[] intRadix = { 0, 0, /*two, 2^30*/ 0x40000000, 0, 0, 0, 0, 0, 0, 0, /*ten, 10^9*/ 1000000000 };
@@ -303,19 +303,16 @@ public class MyBigInt {
         int[] result = new int[bigger.length + smaller.length];
 
         long mult = 0;
-        long carry = 0;
         for (int s = 0; s < smaller.length; s++) {
+            long carry = 0;
             for (int b = 0; b < bigger.length; b++) {
                 mult = (smaller[smaller.length-s-1] & LONG_MASK) * (bigger[bigger.length-b-1] & LONG_MASK) + carry;
-                result[result.length - 1 - b - s] = (int) ((result[result.length - 1 - b - s] & LONG_MASK) + mult);
+                result[result.length-1-b-s] = (int) ((result[result.length-1-b-s] & LONG_MASK) + mult);
                 carry = mult >>> 32;
             }
-            int cursor = 0;
-            while (carry != 0) {
-                mult = (result[result.length - 1 - bigger.length - s - cursor] & LONG_MASK) + carry;
-                result[result.length - 1 - bigger.length - s] = (int) mult;
-                carry = mult >>> 32;
-                cursor++;
+
+            if (carry != 0) {
+                result[result.length-1-bigger.length-s] = (int) carry;
             }
         }
 

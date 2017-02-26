@@ -54,6 +54,45 @@ class TMRule(namedtuple('TMRule', ['state', 'char', 'next_state', 'write_char', 
         else:
             raise RuntimeError('unexpected direction: ' + str(self.direction))
 
+class DTMRulebook:
+    def __init__(self, rules):
+        self.rules = rules
+
+    def is_applied_to(self, config):
+        return self.rule_for(config) is not None
+
+    def next_config(self, config):
+        applied_rule = self.rule_for(config)
+        return applied_rule.follow(config)
+
+    def rule_for(self, config):
+        applied_rules = frozenset(filter(lambda rule: rule.is_applied_to(config), self.rules))
+        if len(applied_rules) == 0:
+            return None
+        return list(applied_rules)[0]
+
+class DTM:
+    def __init__(self, current_config, accept_states, rulebook):
+        self.current_config = current_config
+        self.accept_states = accept_states
+        self.rulebook = rulebook
+
+    def does_accept(self):
+        return self.current_config.state in self.accept_states
+
+    def is_stuck(self):
+        return not self.rulebook.is_applied_to(self.current_config)
+
+    def step(self):
+        self.current_config = rulebook.next_config(self.current_config)
+
+    def run(self):
+        while not self.does_accept():
+            if not self.is_stuck():
+                self.step()
+            else:
+                break
+
 if __name__ == '__main__':
     print('--- Tape ---')
 
@@ -76,3 +115,31 @@ if __name__ == '__main__':
     print('--- Apply TMRules ---')
 
     print(rule.follow(TMConfiguration(1, Tape([], '0', [], '-'))))
+
+    print('--- Simulate turing machines incrementing binary number ---')
+    rulebook = DTMRulebook(frozenset([
+        TMRule(1, '0', 2, '1', Direction.Right),
+        TMRule(1, '1', 1, '0', Direction.Left),
+        TMRule(1, '_', 2, '1', Direction.Right),
+        TMRule(2, '0', 2, '0', Direction.Right),
+        TMRule(2, '1', 2, '1', Direction.Right),
+        TMRule(2, '_', 3, '_', Direction.Left),
+        ]))
+
+    config = TMConfiguration(1, tape)
+    dtm = DTM(config, [3], rulebook)
+    print(dtm.does_accept())
+    print(dtm.current_config)
+    dtm.run()
+    print(dtm.does_accept())
+    print(dtm.current_config)
+
+    tape = Tape(['1', '2', '1'], '1', [], '_')
+    config = TMConfiguration(1, tape)
+    dtm = DTM(config, [3], rulebook)
+    print(dtm.does_accept())
+    print(dtm.current_config)
+    dtm.run()
+    print(dtm.does_accept())
+    print(dtm.current_config)
+    print(dtm.is_stuck())

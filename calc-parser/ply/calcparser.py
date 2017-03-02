@@ -24,30 +24,14 @@ E -> E ** E
 E -> N
 E -> +N
 E -> -N
+E -> ab E
 E -> (E)
 """
 
-"""
-Grammars:
-S -> E
-E -> E + T
-E -> E - T 
-E -> T
-T -> T * F
-T -> T / F
-T -> T ** F
-T -> F
-F -> N
-F -> +N
-F -> -N
-F -> (E)
-F -> ab F
-"""
-
 precedence = ( \
-        # ('left', 'PLUS', 'MINUS'), \
-        # ('left', 'MULT', 'DIV'), \
-        # ('right', 'EXPONENT'), \
+        ('left', 'PLUS', 'MINUS'), \
+        ('left', 'MULT', 'DIV'), \
+        ('right', 'EXPONENT'), \
         ('right', 'UPLUS', 'UMINUS', 'AB'), \
         )
 
@@ -55,52 +39,44 @@ def p_statement(p):
     'statement : expr'
     p[0] = p[1]
 
+def p_expr_paren(p):
+    'expr : LPAREN expr RPAREN'
+    p[0] = p[2]
+
 def p_expr_plus(p):
-    'expr : expr PLUS term'
+    'expr : expr PLUS expr'
     p[0] = p[1] + p[3]
 
 def p_expr_minus(p):
-    'expr : expr MINUS term'
+    'expr : expr MINUS expr'
     p[0] = p[1] - p[3]
 
-def p_expr_single(p):
-    'expr : term'
-    p[0] = p[1]
-
-def p_term_mult(p):
-    'term : term MULT factor'
+def p_expr_mult(p):
+    'expr : expr MULT expr'
     p[0] = p[1] * p[3]
 
-def p_term_div(p):
-    'term : term DIV factor'
+def p_expr_div(p):
+    'expr : expr DIV expr'
     p[0] = p[1] / p[3]
 
-def p_term_exponent(p):
-    'term : factor EXPONENT term'
+def p_expr_exponent(p):
+    'expr : expr EXPONENT expr'
     p[0] = p[1] ** p[3]
 
-def p_term_single(p):
-    'term : factor'
+def p_expr_num(p):
+    'expr : NUMBER'
     p[0] = p[1]
 
-def p_factor_number(p):
-    'factor : NUMBER'
-    p[0] = p[1]
-
-def p_factor_number_plus(p):
-    'factor : PLUS NUMBER %prec UPLUS'
+def p_expr_up_num(p):
+    'expr : PLUS NUMBER %prec UPLUS'
     p[0] = p[2]
 
-def p_factor_number_minus(p):
-    'factor : MINUS NUMBER %prec UMINUS'
+def p_expr_um_num(p):
+    'expr : MINUS NUMBER %prec UMINUS'
     p[0] = -p[2]
 
-def p_factor_paren(p):
-    'factor : LPAREN expr RPAREN'
-    p[0] = p[2]
-
-def p_factor_ab(p):
-    'factor : AB factor'
+def p_expr_ab(p):
+    'expr : AB expr'
     p[0] = abs(p[2])
 
 def p_error(t):
@@ -114,10 +90,10 @@ def parse(input_string):
     return parse_tree
 
 if __name__ == '__main__':
-    print(parse('1 + 2 + 3'))
-    print(parse('1 + 2 * 3 * 4'))
-    print(parse('3 * 4 - 10 / 2 + 5'))
-    print(parse('-3 * (+4 - 10) / -2 + 5'))
-    print(parse('1 + 2 ** 3 ** 2'))
-    print(parse('ab (1 - 2 - 3)'))
-    print(parse('ab 1 - ab 3'))
+    assert parse('1 + 2 + 3') == 6
+    assert parse('1 + 2 * 3 * 4') == 25
+    assert parse('3 * 4 - 10 / 2 + 5') == 12
+    assert parse('-3 * (+4 - 10) / -2 + 5') == -4
+    assert parse('1 + 2 ** 3 ** 2') == 513
+    assert parse('ab (1 - 2  -3)') == 4
+    assert parse('ab 2 * 5 - ab (-2)') == 8

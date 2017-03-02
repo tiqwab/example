@@ -19,7 +19,7 @@ E -> (E)
 # (optional) Define precedence and associativity of operators.
 # The format is ( ('left' or 'right', <token name>, ...), (...) ).
 # <token name> is expected to be defined in the lexer definition.
-# The latter has the the higher precedence (e.g. MULT and DIV have higher precedence than PLUS and MINUS).
+# The latter has the the higher precedence (e.g. 'MULT' and 'DIV' have the higher precedence than 'PLUS' and 'MINUS').
 # 'UPLUS' and 'UMINUS' are defined as aliases to override precedence (see `p_expr_um_num`)
 precedence = ( \
         ('left', 'PLUS', 'MINUS'), \
@@ -30,7 +30,7 @@ precedence = ( \
 
 # Parsing rules
 # Functions should be start with `p_`.
-# The first rule will be the starting rule when parse (?).
+# The first rule will be the starting rule of parsing (?).
 
 # S -> E
 def p_statement(p):
@@ -69,12 +69,12 @@ def p_expr_num(p):
 
 # E -> +N
 def p_expr_up_num(p):
-    'expr : PLUS NUMBER %prec UPLUS' # override precedence by `%prec UPLUS`
+    'expr : PLUS NUMBER %prec UPLUS' # override precedence of PLUS by `%prec UPLUS`
     p[0] = p[2]
 
 # E -> -N
 def p_expr_um_num(p):
-    'expr : MINUS NUMBER %prec UMINUS' # override precedence by `%prec UMINUS`
+    'expr : MINUS NUMBER %prec UMINUS' # override precedence of MINUS by `%prec UMINUS`
     p[0] = -p[2]
 
 # E -> ab E

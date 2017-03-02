@@ -52,7 +52,7 @@ decrement = \n -> left (n slide (pair zero zero))
 add = \m n s z -> n s (m s z)
 -- add = \m n -> n (increment m)
 -- minus = \m n -> (n decrement (m increment zero))
-minus = \m n -> n (decrement m)
+minus = \m n -> (n decrement) m
 mult = \m n s z -> n (\z' -> m s z') z
 pow = \m n s z -> (n m) s z
 

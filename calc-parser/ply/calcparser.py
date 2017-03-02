@@ -2,18 +2,6 @@ from ply import yacc
 from calclexer import tokens, lexer
 
 """
-Grammers:
-E  -> TE'
-E' -> +TE' | -TE' | e
-T  -> FT'
-T' -> *FT' | /FT' | e
-F  -> F' | F'**F
-F' -> (E) | +N | -N | ab F' | N
-N  -> 0 | 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9
-('e' means empty)
-"""
-
-"""
 Grammars:
 S -> E
 E -> E + E
@@ -28,6 +16,11 @@ E -> ab E
 E -> (E)
 """
 
+# (optional) Define precedence and associativity of operators.
+# The format is ( ('left' or 'right', <token name>, ...), (...) ).
+# <token name> is expected to be defined in the lexer definition.
+# The latter has the the higher precedence (e.g. MULT and DIV have higher precedence than PLUS and MINUS).
+# 'UPLUS' and 'UMINUS' are defined as aliases to override precedence (see `p_expr_um_num`)
 precedence = ( \
         ('left', 'PLUS', 'MINUS'), \
         ('left', 'MULT', 'DIV'), \
@@ -35,53 +28,70 @@ precedence = ( \
         ('right', 'UPLUS', 'UMINUS', 'AB'), \
         )
 
+# Parsing rules
+# Functions should be start with `p_`.
+# The first rule will be the starting rule when parse (?).
+
+# S -> E
 def p_statement(p):
     'statement : expr'
     p[0] = p[1]
 
-def p_expr_paren(p):
-    'expr : LPAREN expr RPAREN'
-    p[0] = p[2]
-
+# E -> E + E
 def p_expr_plus(p):
     'expr : expr PLUS expr'
     p[0] = p[1] + p[3]
 
+# E -> E - E
 def p_expr_minus(p):
     'expr : expr MINUS expr'
     p[0] = p[1] - p[3]
 
+# E -> E * E
 def p_expr_mult(p):
     'expr : expr MULT expr'
     p[0] = p[1] * p[3]
 
+# E -> E / E
 def p_expr_div(p):
     'expr : expr DIV expr'
     p[0] = p[1] / p[3]
 
+# E -> E ** E
 def p_expr_exponent(p):
     'expr : expr EXPONENT expr'
     p[0] = p[1] ** p[3]
 
+# E -> N
 def p_expr_num(p):
     'expr : NUMBER'
     p[0] = p[1]
 
+# E -> +N
 def p_expr_up_num(p):
-    'expr : PLUS NUMBER %prec UPLUS'
+    'expr : PLUS NUMBER %prec UPLUS' # override precedence by `%prec UPLUS`
     p[0] = p[2]
 
+# E -> -N
 def p_expr_um_num(p):
-    'expr : MINUS NUMBER %prec UMINUS'
+    'expr : MINUS NUMBER %prec UMINUS' # override precedence by `%prec UMINUS`
     p[0] = -p[2]
 
+# E -> ab E
 def p_expr_ab(p):
     'expr : AB expr'
     p[0] = abs(p[2])
 
+# E -> ( E )
+def p_expr_paren(p):
+    'expr : LPAREN expr RPAREN'
+    p[0] = p[2]
+
+# Rule for error handling
 def p_error(t):
     print("syntax error at '%s'" % (t.value))
 
+# Generate a LALR parser
 parser = yacc.yacc()
 
 def parse(input_string):

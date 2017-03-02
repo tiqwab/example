@@ -1,7 +1,7 @@
 from ply import lex
 
 tokens = ( 'PLUS', 'MINUS', 'MULT', 'DIV', 'EXPONENT', \
-        'LPAREN', 'RPAREN', 'NUMBER', \
+        'LPAREN', 'RPAREN', 'AB', 'NUMBER', \
         )
 
 t_ignore = " \t"
@@ -34,6 +34,10 @@ def t_RPAREN(t):
     r'\)'
     return t
 
+def t_AB(t):
+    r'ab'
+    return t
+
 def t_NUMBER(t):
     r'[0-9]+'
     t.value = int(t.value)
@@ -63,3 +67,4 @@ if __name__ == '__main__':
     print(test_lexer('1 + 2'))
     print(test_lexer('1 + 20 * 3 - 10 / -2 * (1 + 3)'))
     print(test_lexer('1 ** 2'))
+    print(test_lexer('ab 5 + ab -2 * ab (1 - 2)'))

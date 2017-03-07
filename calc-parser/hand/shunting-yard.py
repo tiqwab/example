@@ -15,6 +15,8 @@ operators = (
         Operator('*', lambda x, y: x * y, 2, Assoc.Left),
         Operator('/', lambda x, y: x / y, 2, Assoc.Left),
         Operator('**', lambda x, y: x ** y, 3, Assoc.Right),
+        Operator('(', None, 0, None),
+        Operator(')', None, 0, None),
         )
 
 def find_op(sym):
@@ -24,6 +26,8 @@ def find_op(sym):
     return ops[0]
 
 def can_apply_prev_op(prev_op, current_op):
+    if prev_op.func is None:
+        return False
     if current_op.associativity == Assoc.Left:
         return prev_op.precedence >= current_op.precedence
     else:
@@ -57,10 +61,22 @@ class ShuntingYardParser:
             if isinstance(token, int):
                 output.append(token)
                 continue
+
             current_op = find_op(token)
-            while True:
-                if len(opstack) == 0:
-                    break
+            if current_op.symbol == '(':
+                opstack.append(current_op)
+                continue
+            if current_op.symbol == ')':
+                while True:
+                    prev_op = opstack.pop()
+                    if prev_op.symbol == '(':
+                        break
+                    rhs = output.pop()
+                    lhs = output.pop()
+                    output.append(prev_op.func(lhs, rhs))
+                continue
+
+            while len(opstack) > 0:
                 prev_op = opstack.pop()
                 if not can_apply_prev_op(prev_op, current_op):
                     opstack.append(prev_op)
@@ -69,13 +85,13 @@ class ShuntingYardParser:
                 lhs = output.pop()
                 output.append(prev_op.func(lhs, rhs))
             opstack.append(current_op)
+
         while len(opstack) > 0:
             prev_op = opstack.pop()
             rhs = output.pop()
             lhs = output.pop()
             output.append(prev_op.func(lhs, rhs))
         return output[0]
-
 
 def calculate(input):
     tokenizer = Tokenizer(input)
@@ -88,3 +104,4 @@ if __name__ == '__main__':
     assert calculate('1 + 2 * 3') == 7
     assert calculate('1 - 6 * 3 / 2 + 4') == -4
     assert calculate('1 + 3 * 2 ** 3 ** 2 - 4') == 1 + 3 * 512 - 4
+    assert calculate('( 2 - 6 * 3 ) / ( 3 + 1 )') == -4

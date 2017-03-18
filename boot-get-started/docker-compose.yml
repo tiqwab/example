@@ -12,6 +12,7 @@ services:
             MYSQL_PASSWORD: sboot
             MYSQL_ROOT_PASSWORD: root
     app:
+        build: .
         image: tiqwab/boot:0.0.1
         depends_on: 
             - db

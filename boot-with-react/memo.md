@@ -3,3 +3,9 @@
 ```
 $ ./gradlew npmInstall
 ```
+
+### Run webpack from gradle
+
+```
+$ ./gradlew webpack
+```

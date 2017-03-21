@@ -49,8 +49,8 @@ node {
     nodeModulesDir = file("${project.projectDir}")
 }
 
-task testNpm(type: NpmTask) {
-    args = ['run', 'test']
+task webpack(type: NpmTask) {
+    args = ['run', 'webpack']
 }
 
 // Execute npm task before 'processResource' task.

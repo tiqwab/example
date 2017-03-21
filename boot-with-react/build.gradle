@@ -1,13 +1,18 @@
 buildscript {
-	ext {
-		springBootVersion = '1.5.2.RELEASE'
-	}
-	repositories {
-		mavenCentral()
-	}
-	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
-	}
+    ext {
+        springBootVersion = '1.5.2.RELEASE'
+    }
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+    }
+}
+
+// Add Node plugin
+plugins {
+    id "com.moowork.node" version "1.1.1"
 }
 
 apply plugin: 'java'
@@ -18,14 +23,35 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = 1.8
 
 repositories {
-	mavenCentral()
+    mavenCentral()
 }
-
 
 dependencies {
-	compile('org.springframework.boot:spring-boot-starter-data-jpa')
-	compile('org.springframework.boot:spring-boot-starter-data-rest')
-	compile('org.springframework.boot:spring-boot-starter-thymeleaf')
-	compileOnly('org.projectlombok:lombok')
-	testCompile('org.springframework.boot:spring-boot-starter-test')
+    compile('org.springframework.boot:spring-boot-starter-data-jpa')
+    compile('org.springframework.boot:spring-boot-starter-data-rest')
+    compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compileOnly('org.projectlombok:lombok')
+    testCompile('org.springframework.boot:spring-boot-starter-test')
 }
+
+node {
+    // Version of node to use.
+    // version = ''
+    // Version of npm to use.
+    // npmVersion = ''
+    // If ture, it will download node.
+    download = false
+    // Set the work directory for unpacking node
+    // workDir = file("${project.buildDir}/nodejs")
+    // Set the work directory for NPM
+    // npmWorkDir = file("${project.buildDir}/npm")
+    // Set the work directory where node_modules should be located
+    nodeModulesDir = file("${project.projectDir}")
+}
+
+task testNpm(type: NpmTask) {
+    args = ['run', 'test']
+}
+
+// Execute npm task before 'processResource' task.
+// processResources.dependsOn npm_install

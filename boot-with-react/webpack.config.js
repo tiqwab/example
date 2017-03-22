@@ -3,7 +3,7 @@ module.exports = {
       bundle: __dirname + "/src/main/js/app.js"
     },
     output: {
-        path: __dirname + '/src/main/js',
+        path: __dirname + '/src/main/resources/static/js',
         filename: "bundle.js",
         // publicPath: "/assets/"
     },

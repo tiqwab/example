@@ -1,4 +1,4 @@
-package com.tiqwab;
+package com.tiqwab.example;
 
 import org.junit.Ignore;
 import org.junit.Test;

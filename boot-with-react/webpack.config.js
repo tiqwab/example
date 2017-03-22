@@ -1,6 +1,6 @@
 module.exports = {
     entry: {
-      bundle: __dirname + "/src/main/js/app.js"
+      bundle: __dirname + "/src/main/js/main.js"
     },
     output: {
         path: __dirname + '/src/main/resources/static/js',

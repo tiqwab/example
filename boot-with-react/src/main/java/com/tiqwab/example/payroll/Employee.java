@@ -1,10 +1,12 @@
 package com.tiqwab.example.payroll;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Data;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.Version;
 
 @Data
 @Entity
@@ -18,6 +20,10 @@ public class Employee {
     private String description;
     // private int age;
     // private Date birthDay;
+
+    @Version
+    @JsonIgnore
+    private Long version;
 
     private Employee() {
 

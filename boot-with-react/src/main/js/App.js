@@ -53,16 +53,26 @@ class App extends React.Component {
             .then(schema => {
                 console.log(schema);
                 this.schema = schema.data;
+                this.links = employeeCollection.data._links;
                 return employeeCollection;
             });
         })
         .then(employeeCollection => {
             console.log(employeeCollection);
-            this.setState({
-                employees: employeeCollection.data._embedded.employees,
-                attributes: Object.keys(this.schema.properties),
-                pageSize: pageSize,
-                links: employeeCollection.data._links,
+            axios.all(employeeCollection.data._embedded.employees.map(employee => {
+                return client.get(employee._links.self.href);
+            }))
+            .then(employees => {
+                console.log(employees);
+                this.setState({
+                    employees: employees.map(emp => emp.data),
+                    attributes: Object.keys(this.schema.properties),
+                    pageSize: pageSize,
+                    links: this.links,
+                });
+            })
+            .catch(response => {
+                console.error(response);
             });
         })
         .catch(response => {

@@ -30,6 +30,7 @@ class App extends React.Component {
         this.updatePageSize = this.updatePageSize.bind(this);
         this.onDelete = this.onDelete.bind(this);
         this.onCreate = this.onCreate.bind(this);
+        this.onUpdate = this.onUpdate.bind(this);
     }
 
     componentDidMount() {
@@ -58,14 +59,16 @@ class App extends React.Component {
             });
         })
         .then(employeeCollection => {
-            console.log(employeeCollection);
             axios.all(employeeCollection.data._embedded.employees.map(employee => {
                 return client.get(employee._links.self.href);
             }))
             .then(employees => {
                 console.log(employees);
                 this.setState({
-                    employees: employees.map(emp => emp.data),
+                    employees: employees.map(emp => {
+                        emp.data.headers = emp.headers;
+                        return emp.data;
+                    }),
                     attributes: Object.keys(this.schema.properties),
                     pageSize: pageSize,
                     links: this.links,
@@ -85,7 +88,6 @@ class App extends React.Component {
             baseURL: root,
         })
         .then(employeeCollection => {
-            console.log(employeeCollection);
             return client.post(employeeCollection.data._links.self.href, newEmployee, {
                 headers: {
                     'Content-Type': 'application/json',
@@ -102,7 +104,6 @@ class App extends React.Component {
             });
         })
         .then(response => {
-            console.log(response);
             this.onNavigate(response.data._links.last.href);
         })
         .catch(response => {
@@ -113,15 +114,48 @@ class App extends React.Component {
     onNavigate(navUri) {
         client.get(navUri)
         .then(employeeCollection => {
-            this.setState({
-                employees: employeeCollection.data._embedded.employees,
-                attributes: this.state.attributes,
-                pageSize: this.state.pageSize,
-                links: employeeCollection.data._links,
+            axios.all(employeeCollection.data._embedded.employees.map(employee => {
+                return client.get(employee._links.self.href);
+            }))
+            .then(employees => {
+                console.log(employees);
+                this.setState({
+                    employees: employees.map(emp => {
+                        emp.data.headers = emp.headers;
+                        return emp.data;
+                    }),
+                    attributes: this.state.attributes,
+                    pageSize: this.state.pageSize,
+                    links: employeeCollection.data._links,
+                });
+            })
+            .catch(response => {
+                console.error(response);
             });
         })
         .catch(response => {
             console.error(response);
+        });
+    }
+
+    onUpdate(employee, updatedEmployee) {
+        console.log(employee);
+        client.put(employee._links.self.href, updatedEmployee, {
+            headers: {
+                'Content-Type': 'application/json',
+                'If-Match': employee.headers.etag,
+            },
+        })
+        .then(response => {
+            console.log(response);
+            this.loadFromServer(this.state.pageSize);
+        }, error => {
+            console.log(error.message);
+            if (error.response) {
+                if (error.response.status === 412) {
+                    alert('DENIED: Unable to update' + employee._links.self.href + '. Your copy is stale.');
+                }
+            }
         });
     }
 
@@ -151,7 +185,9 @@ class App extends React.Component {
                               pageSize={ this.state.pageSize }
                               onNavigate={ this.onNavigate }
                               updatePageSize={ this.updatePageSize }
-                              onDelete={ this.onDelete } />
+                              onDelete={ this.onDelete }
+                              attributes={ this.state.attributes }
+                              onUpdate={ this.onUpdate }/>
             </div>
         );
     }

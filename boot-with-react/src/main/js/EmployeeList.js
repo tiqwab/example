@@ -47,7 +47,9 @@ class EmployeeList extends React.Component {
         const employees = this.props.employees.map( employee => {
             return <Employee key={ employee._links.self.href }
                              employee={ employee }
-                             onDelete={ this.props.onDelete } />
+                             onDelete={ this.props.onDelete }
+                             attributes={ this.props.attributes }
+                             onUpdate={ this.props.onUpdate } />
         });
 
         var navLinks = [];
@@ -74,6 +76,7 @@ class EmployeeList extends React.Component {
                     <th>Last Name</th>
                     <th>Description</th>
                     <th></th>
+                    <th></th>
                   </tr>
                   { employees }
                 </tbody>
@@ -94,6 +97,8 @@ EmployeeList.propTypes = {
     onNavigate: React.PropTypes.func,
     updatePageSize: React.PropTypes.func,
     onDelete: React.PropTypes.func,
+    attributes: React.PropTypes.array,
+    onUpdate: React.PropTypes.func,
 }
 
 export default EmployeeList;

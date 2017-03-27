@@ -1,4 +1,5 @@
 import React from 'react';
+import UpdateDialog from './UpdateDialog';
 
 class Employee extends React.Component {
 
@@ -8,7 +9,6 @@ class Employee extends React.Component {
     }
 
     handleDelete() {
-        console.log(this.props.employee);
         this.props.onDelete(this.props.employee);
     }
 
@@ -18,6 +18,11 @@ class Employee extends React.Component {
               <td>{ this.props.employee.firstName }</td>
               <td>{ this.props.employee.lastName }</td>
               <td>{ this.props.employee.description }</td>
+              <td>
+                <UpdateDialog employee={ this.props.employee }
+                              attributes={ this.props.attributes }
+                              onUpdate={ this.props.onUpdate } />
+              </td>
               <td>
                 <button onClick={ this.handleDelete }>Delete</button>
               </td>
@@ -29,7 +34,9 @@ class Employee extends React.Component {
 
 Employee.propTypes = {
     onDelete: React.PropTypes.func,
+    onUpdate: React.PropTypes.func,
     employee: React.PropTypes.object,
+    attributes: React.PropTypes.array,
 }
 
 export default Employee;

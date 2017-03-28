@@ -30,6 +30,8 @@ dependencies {
     compile('org.springframework.boot:spring-boot-starter-data-jpa')
     compile('org.springframework.boot:spring-boot-starter-data-rest')
     compile('org.springframework.boot:spring-boot-starter-thymeleaf')
+    compile('org.springframework.boot:spring-boot-starter-security')
+    compile('org.thymeleaf.extras:thymeleaf-extras-springsecurity4')
     compile('com.h2database:h2:1.4.194')
     compileOnly('org.projectlombok:lombok')
     testCompile('org.springframework.boot:spring-boot-starter-test')

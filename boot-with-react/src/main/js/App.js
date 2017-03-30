@@ -53,9 +53,24 @@ class App extends React.Component {
             })
             .then(schema => {
                 console.log(schema);
+
+                /* Filter unnecessary JSON schema properties */
+                Object.keys(schema.data.properties).forEach(property => {
+                    if (schema.data.properties[property].hasOwnProperty('format')
+                            && schema.data.properties[property].format == 'uri') {
+                        delete schema.data.properties[property];
+                    } else if (schema.data.properties[property].hasOwnProperty('$ref')) {
+                        delete schema.data.properties[property];
+                    }
+                });
+
+                console.log(Object.keys(schema.data.properties));
                 this.schema = schema.data;
                 this.links = employeeCollection.data._links;
                 return employeeCollection;
+            })
+            .catch(response => {
+                console.error(response);
             });
         })
         .then(employeeCollection => {
@@ -139,7 +154,7 @@ class App extends React.Component {
     }
 
     onUpdate(employee, updatedEmployee) {
-        console.log(employee);
+        console.log(updatedEmployee);
         client.put(employee._links.self.href, updatedEmployee, {
             headers: {
                 'Content-Type': 'application/json',
@@ -152,7 +167,10 @@ class App extends React.Component {
         }, error => {
             console.log(error.message);
             if (error.response) {
-                if (error.response.status === 412) {
+                if (error.response.status === 403) {
+                    alert('ACCESS DENIED: You are not authorized to update ' +
+                        employee._links.self.href);
+                } else if (error.response.status === 412) {
                     alert('DENIED: Unable to update' + employee._links.self.href + '. Your copy is stale.');
                 }
             }
@@ -164,8 +182,14 @@ class App extends React.Component {
         .then(response => {
             this.loadFromServer(this.state.pageSize);
         })
-        .catch(response => {
-            console.error(response);
+        .catch(error => {
+            console.log(error.message);
+            if (error.response) {
+                if (error.response.status === 403) {
+                    alert('ACCESS DENIED: You are not authorized to update ' +
+                        employee._links.self.href);
+                }
+            }
         });
     }
 

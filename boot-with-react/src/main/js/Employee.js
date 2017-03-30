@@ -18,6 +18,7 @@ class Employee extends React.Component {
               <td>{ this.props.employee.firstName }</td>
               <td>{ this.props.employee.lastName }</td>
               <td>{ this.props.employee.description }</td>
+              <td>{ this.props.employee.manager.name }</td>
               <td>
                 <UpdateDialog employee={ this.props.employee }
                               attributes={ this.props.attributes }

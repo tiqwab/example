@@ -75,6 +75,7 @@ class EmployeeList extends React.Component {
                     <th>First Name</th>
                     <th>Last Name</th>
                     <th>Description</th>
+                    <th>Manager</th>
                     <th></th>
                     <th></th>
                   </tr>

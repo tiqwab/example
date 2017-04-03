@@ -1,0 +1,13 @@
+spring:
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+
+# Show parameters as well as sql
+logging:
+    level:
+        org:
+            hibernate:
+                sql: DEBUG
+                type: TRACE

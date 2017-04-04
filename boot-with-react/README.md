@@ -1,6 +1,6 @@
 Reference: https://spring.io/guides/tutorials/react-and-spring-data-rest/
 
-Different from the above implementation:
+Difference from the above implementation:
 
 - Use gradle
   - and use a [gradle-node-plugin][1] to setup the environment for React

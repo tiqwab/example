@@ -37,3 +37,7 @@ node {
     download = false
     nodeModulesDir = file("${project.projectDir}")
 }
+
+task webpack(type: NpmTask) {
+    args = ['run', 'webpack']
+}

@@ -19,6 +19,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // AuthenticationManager returns an Authentication if it can verify that the input represents a valid principle.
+        // AuthenticationManagerBuilder is widely applicable to customize the authentication mechanism.
         auth
                 .userDetailsService(this.userDetailsService)
                 .passwordEncoder(Manager.PASSWORD_ENCODER);

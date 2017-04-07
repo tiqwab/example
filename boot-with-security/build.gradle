@@ -10,6 +10,10 @@ buildscript {
 	}
 }
 
+plugins {
+    id "com.moowork.node" version "1.1.1"
+}
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'org.springframework.boot'
@@ -27,4 +31,9 @@ dependencies {
 	compile('org.springframework.boot:spring-boot-starter-web')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+}
+
+node {
+    download = false
+    nodeModulesDir = file("${project.projectDir}")
 }

@@ -1,0 +1,26 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+<title>Login</title>
+<meta charset="UTF-8" />
+<link href="css/bootstrap.css" rel="stylesheet" />
+</head>
+<body>
+    <div th:if="${session['SPRING_SECURITY_LAST_EXCEPTION']} != null">
+        <div class="alert alert-danger">
+            There was a problem logging in. Please try again.
+        </div>
+    </div>
+    <form action="" th:action="@{/login}" method="post">
+        <div class="form-group">
+            <label for="username">Username:</label>
+            <input type="text" class="form-control" id="username" name="username" />
+        </div>
+        <div class="form-group">
+            <label for="password">Password:</label>
+            <input type="text" class="form-control" id="password" name="password" />
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+    </form>
+</body>
+</html>

@@ -1,13 +1,16 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
 <head>
-<title>Hello React</title>
+<title>Home</title>
 <meta charset="UTF-8" />
 <link href="css/bootstrap.css" rel="stylesheet" />
 </head>
 <body>
     <div class="container">
         <h1>Greeting</h1>
+        <form action="" th:action="@{/logout}" method="post">
+            <button type="submit" class="btn btn-primary">logout</button>
+        </form>
         <div id="main">
         </div>
     </div>

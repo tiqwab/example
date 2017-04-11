@@ -1,3 +1,14 @@
 spring:
     thymeleaf:
         cache: false
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+
+logging:
+    level:
+        org:
+            hibernate:
+                sql: DEBUG
+                type: TRACE

@@ -1,5 +1,6 @@
 <!doctype html>
-<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<html lang="en" xmlns:th="http://www.thymeleaf.org"
+                xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
 <head>
 <title>Home</title>
 <meta charset="UTF-8" />
@@ -8,6 +9,20 @@
 <body>
     <div class="container">
         <h1>Greeting</h1>
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>name</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <th scope="row">1</th>
+                    <td sec:authentication="name">user</td>
+                </tr>
+            </tbody>
+        </table>
         <form action="" th:action="@{/logout}" method="post">
             <button type="submit" class="btn btn-primary">logout</button>
         </form>

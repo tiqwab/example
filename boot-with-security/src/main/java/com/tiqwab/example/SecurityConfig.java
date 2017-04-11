@@ -7,9 +7,14 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 
+import javax.sql.DataSource;
+
 @Configuration
 @EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Autowired
+    DataSource dataSource;
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -32,10 +37,21 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .logoutSuccessUrl("/");
     }
 
+    // Reference: http://ziqoo.com/wiki/index.php?Spring%20Security%20%A5%C7%A1%BC%A5%BF%A5%D9%A1%BC%A5%B9%A4%F2%BB%C8%CD%D1%A4%B7%A4%BF%C7%A7%BE%DA
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth
+                // Set up user data in memory
+                /*
                 .inMemoryAuthentication()
+                    .withUser("user").password("user").roles("USER")
+                    .and()
+                    .withUser("admin").password("admin").roles("ADMIN")
+                */
+                // Set up user data in database
+                .jdbcAuthentication()
+                    .dataSource(dataSource)
+                    .withDefaultSchema()
                     .withUser("user").password("user").roles("USER")
                     .and()
                     .withUser("admin").password("admin").roles("ADMIN")

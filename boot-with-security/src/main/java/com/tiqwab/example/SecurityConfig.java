@@ -16,6 +16,9 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     DataSource dataSource;
 
+    @Autowired
+    MyUserDetailsService myUserDetailsService;
+
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
@@ -49,12 +52,16 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                     .withUser("admin").password("admin").roles("ADMIN")
                 */
                 // Set up user data in database
+                /*
                 .jdbcAuthentication()
                     .dataSource(dataSource)
                     .withDefaultSchema()
                     .withUser("user").password("user").roles("USER")
                     .and()
                     .withUser("admin").password("admin").roles("ADMIN")
+                */
+                .userDetailsService(this.myUserDetailsService)
+                .passwordEncoder(MyUser.PASSWORD_ENCODER)
                 ;
     }
 

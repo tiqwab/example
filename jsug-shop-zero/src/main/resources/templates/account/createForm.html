@@ -32,6 +32,55 @@
                 <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">error!</span>
             </div>
         </div>
+        <div th:classappend="${#fields.hasErrors('password')}? 'has-error'">
+            <label for="password">パスワード</label>
+            <div>
+                <input id="password" type="text" th:field="*{password}" name="password" />
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}">error!</span>
+            </div>
+        </div>
+        <div th:classappend="${#fields.hasErrors('confirmPassword')}? 'has-error'">
+            <label for="confirmPassword">パスワード (確認)</label>
+            <div>
+                <input id="confirmPassword" type="text" th:field="*{confirmPassword}" name="confirmPassword" />
+                <span th:if="${#fields.hasErrors('confirmPassword')}" th:errors="*{confirmPassword}">error!</span>
+            </div>
+        </div>
+        <div th:classappend="${#fields.hasErrors('age')}? 'has-error'">
+            <label for="age">年齢</label>
+            <div>
+                <input id="age" type="text" th:field="*{age}" name="age" />
+                <span th:if="${#fields.hasErrors('age')}" th:errors="*{age}">error!</span>
+            </div>
+        </div>
+        <div th:classappend="${#fields.hasErrors('email')}? 'has-error'">
+            <label for="email">E-mail</label>
+            <div>
+                <input id="email" type="text" th:field="*{email}" name="email" />
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}">error!</span>
+            </div>
+        </div>
+        <div th:classappend="${#fields.hasErrors('birthDay')}? 'has-error'">
+            <label for="birthDay">誕生日</label>
+            <div>
+                <input id="birthDay" type="text" th:field="*{birthDay}" name="birthDay" />
+                <span th:if="${#fields.hasErrors('birthDay')}" th:errors="*{birthDay}">error!</span>
+            </div>
+        </div>
+        <div th:classappend="${#fields.hasErrors('address')}? 'has-error'">
+            <label for="address">住所</label>
+            <div>
+                <input id="address" type="text" th:field="*{address}" name="address" />
+                <span th:if="${#fields.hasErrors('address')}" th:errors="*{address}">error!</span>
+            </div>
+        </div>
+        <div th:classappend="${#fields.hasErrors('zip')}? 'has-error'">
+            <label for="zip">郵便番号</label>
+            <div>
+                <input id="zip" type="text" th:field="*{zip}" name="zip" />
+                <span th:if="${#fields.hasErrors('zip')}" th:errors="*{zip}">error!</span>
+            </div>
+        </div>
         <button type="submit">新規登録</button>
     </form>
 </div>

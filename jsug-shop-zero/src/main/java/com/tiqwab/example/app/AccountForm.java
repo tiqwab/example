@@ -13,6 +13,7 @@ public class AccountForm {
 
     private String name;
     private String password;
+    private String confirmPassword;
     private String email;
     private LocalDate birthDay;
     private String zip;

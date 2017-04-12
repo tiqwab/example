@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>ユーザ登録</title>
+</head>
+<body>
+<nav role="navigation">
+    <div>
+        <div>
+            <a th:href="@{/}"><span></span></a>
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <a th:href="@{/}" href="../goods/showGoods.html">ホーム</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <!-- TODO: 'th:object' allows to access the specified object by '*{<field>}' inside the tag -->
+    <form th:action="@{/account/create}" action="createFinish.html" th:object="${accountForm}" method="post">
+        <h1>ユーザ情報</h1>
+        <!-- TODO: ''${#fields}' allows to access error fields -->
+        <div th:classappend="${#fields.hasErrors('name')}? 'has-error'">
+            <label for="name">名前</label>
+            <div>
+                <input id="name" type="text" th:field="*{name}" name="name" />
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}">error!</span>
+            </div>
+        </div>
+        <button type="submit">新規登録</button>
+    </form>
+</div>
+</body>
+</html>

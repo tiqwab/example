@@ -9,6 +9,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner {
@@ -20,7 +21,16 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        final Account user = new Account("user", "user");
+        final Account user = Account.builder()
+                .name("user")
+                .password(Account.PASSWORD_ENCODER.encode("user"))
+                .email("user@user.com")
+                .birthDay(LocalDate.of(2017, 4, 1))
+                .zip("111-1111")
+                .address("Tokyo")
+                .age(20)
+                .roles(new String[]{"ROLE_USER"})
+                .build();
         accountRepository.save(user);
     }
 }

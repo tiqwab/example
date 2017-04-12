@@ -1,5 +1,6 @@
 package com.tiqwab.example.domain;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
@@ -13,6 +14,8 @@ import java.time.LocalDate;
 
 @Getter
 @ToString(exclude = "password")
+@AllArgsConstructor
+@Builder
 @Entity
 public class Account {
 
@@ -24,29 +27,14 @@ public class Account {
     private String name;
     private String password;
     private String email;
+    // TODO: How to store LocalDate properly by JPA?
     private LocalDate birthDay;
     private String zip;
     private String address;
     private Integer age;
-
-    public void setPassword(String password) {
-        this.password = PASSWORD_ENCODER.encode(password);
-    }
+    private String[] roles;
 
     public Account() {
-
-    }
-
-    public Account(String name, String password) {
-        this.name = name;
-        setPassword(password);
-    }
-
-    public static AccountBuilder builder() {
-        return new AccountBuilder();
-    }
-
-    public static class AccountBuilder {
 
     }
 

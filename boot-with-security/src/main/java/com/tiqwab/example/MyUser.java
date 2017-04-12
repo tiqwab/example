@@ -20,7 +20,6 @@ public class MyUser {
     private Long id;
     private String name;
     private String password;
-    private String[] roles;
 
     public void setPassword(String password) {
         this.password = PASSWORD_ENCODER.encode(password);
@@ -30,10 +29,9 @@ public class MyUser {
 
     }
 
-    public MyUser(String name, String password, String... roles) {
+    public MyUser(String name, String password) {
         this.name = name;
         this.setPassword(password);
-        this.roles = roles;
     }
 
 }

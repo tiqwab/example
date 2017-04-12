@@ -1,7 +1,7 @@
 package com.tiqwab.example;
 
-import com.tiqwab.example.domain.Account;
-import com.tiqwab.example.repository.AccountRepository;
+import com.tiqwab.example.domain.model.Account;
+import com.tiqwab.example.domain.repository.AccountRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +9,6 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
-import java.util.Arrays;
 
 @Component
 public class DatabaseLoader implements CommandLineRunner {

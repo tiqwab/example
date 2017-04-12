@@ -1,4 +1,4 @@
-package com.tiqwab.example.domain;
+package com.tiqwab.example.domain.model;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

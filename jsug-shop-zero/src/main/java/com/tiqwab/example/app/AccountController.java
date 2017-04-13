@@ -31,12 +31,12 @@ public class AccountController {
         return "account/createForm";
     }
 
-    /*
     @RequestMapping(value = "create", method = RequestMethod.POST)
     String create(@Validated AccountForm form, BindingResult bindingResult, RedirectAttributes attributes) {
         if (bindingResult.hasErrors()) {
             return "account/createForm";
         }
+
         Account account = Account.builder()
                 .name(form.getName())
                 .password(Account.PASSWORD_ENCODER.encode(form.getPassword()))
@@ -46,7 +46,10 @@ public class AccountController {
                 .address(form.getAddress())
                 .age(form.getAge())
                 .build();
-        accountService.register(account);
+        // accountService.register(account);
+
+        // TODO: addFlashAttribute はリダイレクト先の controller メソッドや thymeleaf で使用したい場合に良さそう
+        //       addAttribute はどうやら request parameter としてセットされる。なので リダイレクト先の controller メソッドで PathVariable や RequestParam として取得できる。
         attributes.addFlashAttribute(account);
         return "redirect:/account/create?finish"; // post-request-get (PRG) pattern
     }
@@ -55,6 +58,5 @@ public class AccountController {
     String createFinish() {
         return "account/createFinish";
     }
-    */
 
 }

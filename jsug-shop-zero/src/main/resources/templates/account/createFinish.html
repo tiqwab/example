@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>ユーザ登録</title>
+</head>
+<body>
+
+<nav role="navigation">
+    <div>
+        <div>
+            <a th:href="@{/}"><span></span></a>
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <a th:href="@{/}" href="../goods/showGoods.html">ホーム</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <h1>ユーザ登録完了</h1>
+
+    <p>
+        ようこそ <span th:text="${account.name}">ほげ</span>さん。<br />
+        <a th:href="@{/loginForm}" href="../login/loginForm.html">こちら</a>からログインして下さい。
+    </p>
+</div>
+</body>
+</html>

@@ -1,6 +1,7 @@
 package com.tiqwab.example.app;
 
 import com.tiqwab.example.domain.model.Account;
+import com.tiqwab.example.domain.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -14,10 +15,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("account")
 public class AccountController {
 
-    /*
     @Autowired
     AccountService accountService;
-    */
 
     // TODO: Check @ModelAttribute
     // When is a model created and deleted?
@@ -46,7 +45,7 @@ public class AccountController {
                 .address(form.getAddress())
                 .age(form.getAge())
                 .build();
-        // accountService.register(account);
+        accountService.register(account);
 
         // TODO: addFlashAttribute はリダイレクト先の controller メソッドや thymeleaf で使用したい場合に良さそう
         //       addAttribute はどうやら request parameter としてセットされる。なので リダイレクト先の controller メソッドで PathVariable や RequestParam として取得できる。

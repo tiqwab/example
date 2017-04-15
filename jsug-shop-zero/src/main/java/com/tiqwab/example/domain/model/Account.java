@@ -27,7 +27,6 @@ public class Account {
     private String name;
     private String password;
     private String email;
-    // TODO: How to store LocalDate properly by JPA?
     private LocalDate birthDay;
     private String zip;
     private String address;

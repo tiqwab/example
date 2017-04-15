@@ -21,10 +21,8 @@
 </nav>
 
 <div>
-    <!-- TODO: 'th:object' allows to access the specified object by '*{<field>}' inside the tag -->
     <form th:action="@{/account/create}" action="createFinish.html" th:object="${accountForm}" method="post">
         <h1>ユーザ情報</h1>
-        <!-- TODO: ''${#fields}' allows to access error fields -->
         <div th:classappend="${#fields.hasErrors('name')}? 'has-error'">
             <label for="name">名前</label>
             <div>

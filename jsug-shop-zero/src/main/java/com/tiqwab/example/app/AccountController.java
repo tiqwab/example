@@ -18,7 +18,6 @@ public class AccountController {
     @Autowired
     AccountService accountService;
 
-    // TODO: Check @ModelAttribute
     // When is a model created and deleted?
     @ModelAttribute
     AccountForm setupForm() {
@@ -47,7 +46,6 @@ public class AccountController {
                 .build();
         accountService.register(account);
 
-        // TODO: addFlashAttribute はリダイレクト先の controller メソッドや thymeleaf で使用したい場合に良さそう
         //       addAttribute はどうやら request parameter としてセットされる。なので リダイレクト先の controller メソッドで PathVariable や RequestParam として取得できる。
         attributes.addFlashAttribute(account);
         return "redirect:/account/create?finish"; // post-request-get (PRG) pattern

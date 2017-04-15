@@ -25,7 +25,6 @@ public class AccountForm {
     private String confirmPassword;
     @Email @Size(min = 1, max = 100) @NotNull @UnusedEmail
     private String email;
-    // TODO: @DataTimeFormat specifies format of date
     // Use 'pattern' attribute if the more flexible pattern is necessary.
     @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) @NotNull
     private LocalDate birthDay;

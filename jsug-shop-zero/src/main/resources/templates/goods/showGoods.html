@@ -1,0 +1,12 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>ユーザ登録</title>
+</head>
+<body>
+<p th:text="${categoryId}"></p>
+<p th:each="category : ${categories}"
+   th:text="${category.categoryName}"></p>
+</body>
+</html>

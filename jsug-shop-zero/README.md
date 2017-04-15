@@ -4,6 +4,8 @@ Reference: [Spring Boot ハンズオン](http://jsug-spring-boot-handson.readthe
 
 1. Enable to create a new account
 2. Enable to list items
+  - list items of the current category
+  - (paging)
 3. Enable to manage a shopping carts
 4. Enable to order items
 5. Add a login form

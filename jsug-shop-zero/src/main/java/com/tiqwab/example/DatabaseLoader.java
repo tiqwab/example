@@ -1,7 +1,12 @@
 package com.tiqwab.example;
 
 import com.tiqwab.example.domain.model.Account;
+import com.tiqwab.example.domain.model.Category;
+import com.tiqwab.example.domain.model.Goods;
 import com.tiqwab.example.domain.repository.AccountRepository;
+import com.tiqwab.example.domain.repository.CategoryRepository;
+import com.tiqwab.example.domain.repository.GoodsRepository;
+import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +15,7 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+@Slf4j
 @Component
 public class DatabaseLoader implements CommandLineRunner {
 
@@ -17,6 +23,12 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Autowired
     AccountRepository accountRepository;
+
+    @Autowired
+    CategoryRepository categoryRepository;
+
+    @Autowired
+    GoodsRepository goodsRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -31,5 +43,29 @@ public class DatabaseLoader implements CommandLineRunner {
                 .roles(new String[]{"ROLE_USER"})
                 .build();
         accountRepository.save(user);
+
+        final Category bookCategory = Category.builder().categoryName("book").build();
+        categoryRepository.save(bookCategory);
+
+        final Category cdCategory = Category.builder().categoryName("cd").build();
+        categoryRepository.save(cdCategory);
+
+        log.info(bookCategory.toString());
+
+        final Goods book1 = Goods.builder()
+                .goodsName("book1")
+                .description("this is book1")
+                .price(100)
+                .category(bookCategory)
+                .build();
+        goodsRepository.save(book1);
+
+        final Goods cd1 = Goods.builder()
+                .goodsName("cd1")
+                .description("this is cd1")
+                .price(200)
+                .category(cdCategory)
+                .build();
+        goodsRepository.save(cd1);
     }
 }

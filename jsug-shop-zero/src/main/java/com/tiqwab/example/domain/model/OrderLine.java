@@ -10,4 +10,8 @@ public class OrderLine {
     private Goods goods;
     private Integer quantity;
 
+    public long getSubtotal() {
+        return this.goods.getPrice() * quantity;
+    }
+
 }

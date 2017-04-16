@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>買い物カゴ</title>
+</head>
+<body>
+
+<nav>
+    <div>
+        <a th:href="@{/}"><span></span></a>
+    </div>
+    <div>
+        <ul>
+            <li>
+                <a th:href="@{/}" href="../goods/showGoods.html">ホーム</a>
+            </li>
+            <li>
+                <a th:href="@{/cart}" href="../cart/viewCart.html">カート</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div>
+    <h1>買い物カゴ内容</h1>
+
+    <div th:if="${error}" th:text="${error}">
+        買い物カゴが空です
+    </div>
+    <form th:action="@{/cart}" method="post">
+        <table>
+            <thead>
+            <tr>
+                <th>商品名</th>
+                <th>値段</th>
+                <th>個数</th>
+                <th>合計</th>
+                <th>削除</th>
+            </tr>
+            </thead>
+            <tbody>
+            <!-- TODO: orderLines.list? -->
+            <!-- http://qiita.com/NagaokaKenichi/items/c6d1b76090ef5ef39482#%E3%82%B9%E3%83%86%E3%83%BC%E3%82%BF%E3%82%B9%E5%A4%89%E6%95%B0 -->
+            <tr th:each="orderLine, row : ${orderLines.list}">
+                <td th:text="${orderLine.goods.goodsName}">goodsName</td>
+                <td th:text="'&yen;' + ${#numbers.formatInteger(orderLine.goods.price, 3, 'COMMA')}">100</td>
+                <td th:text="${orderLine.quantity}">10</td>
+                <td th:text="'&yen;' + ${#numbers.formatInteger(orderLine.subtotal, 3, 'COMMA')}">1000</td>
+                <td><input type="checkbox" name="lineNo" th:value="${row.index}" /></td>
+            </tr>
+            </tbody>
+        </table>
+        <button type="submit">チェックした商品を削除する</button>
+        <p>合計: <span th:text="'&yen;' + ${#numbers.formatInteger(orderLines.total, 3, 'COMMA')}">0</span></p>
+    </form>
+
+    <p>
+        <a th:href="@{/}" href="../goods/showGoods.html">買い物に戻る</a>
+        <!-- TODO: what is '@{/order(confirm)}'? -->
+        <a th:href="@{/order(confirm)}" href="../order/confirm.html">注文画面へ</a>
+    </p>
+</div>
+
+</body>
+</html>

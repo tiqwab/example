@@ -19,4 +19,8 @@ public class GoodsService {
     public Page<Goods> findByCategoryId(Long categoryId, Pageable pageable) {
         return goodsRepository.findByCategoryId(categoryId, pageable);
     }
+
+    public Goods findOne(Long goodsId) {
+        return goodsRepository.findOne(goodsId);
+    }
 }

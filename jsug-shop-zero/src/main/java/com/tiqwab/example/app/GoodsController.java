@@ -1,5 +1,6 @@
 package com.tiqwab.example.app;
 
+import com.tiqwab.example.domain.model.Cart;
 import com.tiqwab.example.domain.model.Category;
 import com.tiqwab.example.domain.model.Goods;
 import com.tiqwab.example.domain.model.OrderLine;
@@ -28,6 +29,9 @@ public class GoodsController {
 
     @Autowired
     GoodsService goodsService;
+
+    @Autowired
+    Cart cart;
 
     @ModelAttribute("categories")
     public List<Category> getCategories() {
@@ -58,10 +62,10 @@ public class GoodsController {
             return showGoods(addToCartForm.getCategoryId(), pageable, model);
         }
         Goods goods = goodsService.findOne(addToCartForm.getGoodsId());
-        addToCartForm.add(OrderLine.builder()
-                                   .goods(goods)
-                                   .quantity(addToCartForm.getQuantity())
-                                   .build());
+        cart.add(OrderLine.builder()
+                          .goods(goods)
+                          .quantity(addToCartForm.getQuantity())
+                          .build());
         return "redirect:/cart";
     }
 

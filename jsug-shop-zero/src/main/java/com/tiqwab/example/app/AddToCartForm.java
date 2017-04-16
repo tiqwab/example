@@ -25,10 +25,4 @@ public class AddToCartForm {
     @Min(1)
     private Integer quantity;
 
-    private List<OrderLine> orderLines = new ArrayList<>();
-
-    public void add(OrderLine orderLine) {
-        orderLines.add(orderLine);
-    }
-
 }

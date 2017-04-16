@@ -30,6 +30,11 @@ public class GoodsController {
         return this.categoryService.findAll();
     }
 
+    @ModelAttribute
+    public AddToCartForm addToCartForm() {
+        return new AddToCartForm();
+    }
+
     @RequestMapping(value = "/")
     public String showGoods(@RequestParam(value = "categoryId", defaultValue = "1") Long categoryId,
                             @PageableDefault Pageable pageable, // TODO: What is @PageableDefault

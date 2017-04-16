@@ -5,8 +5,67 @@
     <title>ユーザ登録</title>
 </head>
 <body>
-<p th:text="${categoryId}"></p>
-<p th:each="category : ${categories}"
-   th:text="${category.categoryName}"></p>
+<nav role="navigation">
+    <div>
+        <div>
+            <a th:href="@{/}"><span></span></a>
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <a th:href="@{/}" href="../goods/showGoods.html">ホーム</a>
+                </li>
+                <li>
+                    <a th:href="@{/cart}" href="../cart/viewCart.html">カート</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <form method="post" th:action="@{/logout}" action="../login/loginForm.html">
+        <button type="submit">ログアウト</button>
+    </form>
+
+    <p>カテゴリーを選んで下さい。</p>
+
+    <form method="get" th:action="@{/}">
+        <select name="categoryId">
+            <option th:each="category : ${categories}"
+                    th:text="${category.categoryName}"
+                    th:value="${category.id}">option</option>
+        </select>
+        <button type="submit">更新</button>
+    </form>
+
+    <table>
+        <thead>
+        <tr>
+            <th>商品名</th>
+            <th>値段</th>
+            <th>説明</th>
+            <th>個数</th>
+        </tr>
+        </thead>
+        <tbody th:if="${page}">
+        <tr th:each="goods : ${page.content}">
+            <td th:text="${goods.goodsName}">goodsName</td>
+            <td th:text="'&yen;' + ${#numbers.formatInteger(goods.price, 3, 'COMMA')}">100</td>
+            <td th:text="${goods.description}">description</td>
+            <td>
+                <form th:action="@{/addToCart}" action="../cart/viewCart.html" method="post">
+                    <input type="number" name="quantity" value="1" />
+                    <span th:if="${#fields.hasErrors('addToCartForm.quantity') and (addToCartForm.goodsId == goods.id)}"
+                          th:errors="${addToCartForm.quantity}">error!</span>
+                    <input type="hidden" name="goodsId" th:value="${goods.id}" />
+                    <input type="hidden" name="categoryId" th:value="${categoryId}" />
+                    <button type="submit">買い物カゴへ</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
 </body>
 </html>

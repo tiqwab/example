@@ -56,19 +56,19 @@
     <table>
         <tr>
             <th>名前</th>
-            <td>name</td>
+            <td th:text="${account.name}">name</td>
         </tr>
         <tr>
             <th>E-mail</th>
-            <td>e-mail</td>
+            <td th:text="${account.email}">e-mail</td>
         </tr>
         <tr>
             <th>郵便番号</th>
-            <td>zip</td>
+            <td th:text="${account.zip}">zip</td>
         </tr>
         <tr>
             <th>住所</th>
-            <td>address</td>
+            <td th:text="${account.address}">address</td>
         </tr>
     </table>
 

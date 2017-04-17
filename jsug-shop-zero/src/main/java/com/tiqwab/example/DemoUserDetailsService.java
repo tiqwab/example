@@ -3,8 +3,6 @@ package com.tiqwab.example;
 import com.tiqwab.example.domain.model.Account;
 import com.tiqwab.example.domain.repository.AccountRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.authority.AuthorityUtils;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -19,7 +17,7 @@ public class DemoUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         Account account = accountRepository.findByName(username);
-        return new User(account.getName(), account.getPassword(), AuthorityUtils.createAuthorityList(account.getRoles()));
+        return new DemoUserDetails(account);
     }
 
 }

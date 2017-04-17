@@ -3,6 +3,7 @@ package com.tiqwab.example.domain.model;
 import lombok.*;
 
 import javax.persistence.*;
+import java.io.Serializable;
 
 @Getter
 @ToString
@@ -10,7 +11,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Goods {
+public class Goods implements Serializable {
 
     @Id @GeneratedValue
     private Long id;

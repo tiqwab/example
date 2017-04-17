@@ -2,12 +2,13 @@ package com.tiqwab.example.domain.model;
 
 import lombok.Getter;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
-public class OrderLines {
+public class OrderLines implements Serializable {
 
     @Getter
     private List<OrderLine> list;

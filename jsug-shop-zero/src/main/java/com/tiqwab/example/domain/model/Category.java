@@ -5,6 +5,7 @@ import lombok.*;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import java.io.Serializable;
 
 @Getter
 @ToString
@@ -12,7 +13,7 @@ import javax.persistence.Id;
 @AllArgsConstructor
 @Builder
 @Entity
-public class Category {
+public class Category implements Serializable {
 
     @Id @GeneratedValue
     private Long id;

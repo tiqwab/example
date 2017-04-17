@@ -4,6 +4,7 @@ import lombok.Getter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Stream;
 
 public class OrderLines {
@@ -27,6 +28,16 @@ public class OrderLines {
         return list.stream()
                 .mapToLong(OrderLine::getSubtotal)
                 .sum();
+    }
+
+    public void remove(Set<Integer> lineNo) {
+        List<OrderLine> newList = new ArrayList<>();
+        for (int i = 0; i < list.size(); i++) {
+            if (!lineNo.contains(i)) {
+                newList.add(this.list.get(i));
+            }
+        }
+        this.list = newList;
     }
 
 }

@@ -10,6 +10,7 @@ import java.time.LocalDate;
 @ToString
 @NoArgsConstructor
 @AllArgsConstructor
+@Getter
 @Builder
 @Entity
 public class DemoOrder {

@@ -1,8 +1,7 @@
 package com.tiqwab.example.domain.service;
 
-import com.tiqwab.example.domain.model.Account;
-import com.tiqwab.example.domain.model.Cart;
-import com.tiqwab.example.domain.model.DemoOrder;
+import com.tiqwab.example.domain.model.*;
+import com.tiqwab.example.domain.repository.OrderLineRepository;
 import com.tiqwab.example.domain.repository.OrderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -11,8 +10,10 @@ import org.springframework.util.SerializationUtils;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
+import java.time.LocalDate;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 @Transactional
@@ -20,6 +21,9 @@ public class OrderService {
 
     @Autowired
     OrderRepository orderRepository;
+
+    @Autowired
+    OrderLineRepository orderLineRepository;
 
     public String calcSignature(Cart cart) {
         byte[] serialized = SerializationUtils.serialize(cart.getOrderLines());
@@ -34,8 +38,7 @@ public class OrderService {
         return Base64.getEncoder().encodeToString(signature);
     }
 
-    public List<DemoOrder> purchase(Account account, Cart cart, String signature) {
-        /*
+    public DemoOrder purchase(Account account, Cart cart, String signature) {
         if (cart.isEmpty()) {
             throw new EmptyCartOrderException("買い物カゴが空です");
         }
@@ -48,21 +51,19 @@ public class OrderService {
                 SerializationUtils.serialize(cart.getOrderLines())
         );
 
-        List<DemoOrder> ordered = new ArrayList<>();
-        for (int i = 0; i < orderLines.size(); i++) {
-            DemoOrder order = DemoOrder.builder()
-                               .lineNo(orderLines.getList().get(i).getLineNo())
-                               .goods(orderLines.getList().get(i).getGoods())
-                               .quantity(orderLines.getList().get(i).getQuantity())
-                               .email(account.getEmail())
-                               .orderDate(LocalDate.now())
-                               .build();
-            ordered.add(orderRepository.save(order));
-        }
-        */
+        DemoOrder order = DemoOrder.builder()
+                .email(account.getEmail())
+                .orderDate(LocalDate.now())
+                .build();
+        orderRepository.save(order);
+
+        orderLines.stream().forEach(line -> {
+            line.setOrder(order);
+            orderLineRepository.save(line);
+        });
+
         cart.clear();
-        // return ordered;
-        return null;
+        return order;
     }
 
 }

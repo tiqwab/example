@@ -14,8 +14,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
 @Slf4j
 @Controller
 @RequestMapping("order")
@@ -43,8 +41,8 @@ public class OrderController {
     public String order(@AuthenticationPrincipal DemoUserDetails user,
                         @RequestParam String signature,
                         RedirectAttributes redirectAttributes) {
-        List<DemoOrder> orders = orderService.purchase(user.getAccount(), cart, signature);
-        redirectAttributes.addFlashAttribute(orders);
+        DemoOrder order = orderService.purchase(user.getAccount(), cart, signature);
+        redirectAttributes.addFlashAttribute("order", order);
         return "redirect:/order?finish";
     }
 

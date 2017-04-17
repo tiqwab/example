@@ -12,12 +12,16 @@ public class OrderLines implements Serializable {
 
     @Getter
     private List<OrderLine> list;
+    private int lineCount;
 
     public OrderLines() {
         this.list = new ArrayList<>();
+        this.lineCount = 0;
     }
 
     public void add(OrderLine orderLine) {
+        this.lineCount++;
+        orderLine.setLineNo(lineCount);
         this.list.add(orderLine);
     }
 
@@ -47,6 +51,7 @@ public class OrderLines implements Serializable {
 
     public void clear() {
         this.list.clear();
+        this.lineCount = 0;
     }
 
     public int size() {

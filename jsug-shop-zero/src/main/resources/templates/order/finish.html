@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>注文完了</title>
+</head>
+<body>
+
+<nav role="navigation">
+    <div>
+        <div>
+            <a th:href="@{/}"><span></span></a>
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <a th:href="@{/}" href="../goods/showGoods.html">ホーム</a>
+                </li>
+                <li>
+                    <a th:href="@{/cart}" href="../cart/viewCart.html">カート</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <h1>注文完了</h1>
+
+    <p>お買上げありがとうございます。</p>
+    <br />
+
+    <table>
+        <tr>
+            <th>注文番号</th>
+            <td th:text="${order.id}">00001</td>
+        </tr>
+        <tr>
+            <th>注文日</th>
+            <td th:text="${order.orderDate}">2015-05-01</td>
+        </tr>
+    </table>
+
+    <a th:href="@{/}" href="../goods/showGoods.html">買い物に戻る</a>
+</div>
+
+</body>
+</html>

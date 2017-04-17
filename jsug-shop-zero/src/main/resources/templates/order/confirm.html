@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>注文確認</title>
+</head>
+<body>
+
+<nav role="navigation">
+    <div>
+        <div>
+            <a th:href="@{/}"><span></span></a>
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <a th:href="@{/}" href="../goods/showGoods.html">ホーム</a>
+                </li>
+                <li>
+                    <a th:href="@{/cart}" href="../cart/viewCart.html">カート</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <h1>注文確認</h1>
+
+    <p>
+        この内容で注文しますか？
+        <br />
+        <a th:href="@{/cart}" href="../cart/viewCart.html">カートの内容を変更する</a>
+    </p>
+    <table>
+        <thead>
+        <tr>
+            <th>商品名</th>
+            <th>値段</th>
+            <th>個数</th>
+            <th>合計</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="orderLine, row : ${orderLines.list}">
+            <td th:text="${orderLine.goods.goodsName}">goodsName</td>
+            <td th:text="'&yen;' + ${#numbers.formatInteger(orderLine.goods.price, 3, 'COMMA')}">100</td>
+            <td th:text="${orderLine.quantity}">10</td>
+            <td th:text="'&yen;' + ${#numbers.formatInteger(orderLine.subtotal, 3, 'COMMA')}">10000</td>
+        </tr>
+        </tbody>
+    </table>
+
+    <p>合計: <span th:text="'&yen;' + ${#numbers.formatInteger(orderLines.total, 3, 'COMMA')}">10000</span></p>
+
+    <table>
+        <tr>
+            <th>名前</th>
+            <td>name</td>
+        </tr>
+        <tr>
+            <th>E-mail</th>
+            <td>e-mail</td>
+        </tr>
+        <tr>
+            <th>郵便番号</th>
+            <td>zip</td>
+        </tr>
+        <tr>
+            <th>住所</th>
+            <td>address</td>
+        </tr>
+    </table>
+
+    <form th:action="@{/order}" action="finish.html" method="post">
+        <input type="hidden" name="signature" th:value="${signature}" />
+        <button type="submit">注文する</button>
+    </form>
+</div>
+
+</body>
+</html>

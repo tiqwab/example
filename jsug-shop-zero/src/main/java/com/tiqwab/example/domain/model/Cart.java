@@ -28,4 +28,8 @@ public class Cart {
         this.orderLines.remove(lineNo);
     }
 
+    public boolean isEmpty() {
+        return orderLines.isEmpty();
+    }
+
 }

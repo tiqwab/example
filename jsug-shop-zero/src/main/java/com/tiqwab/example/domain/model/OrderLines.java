@@ -40,4 +40,8 @@ public class OrderLines {
         this.list = newList;
     }
 
+    public boolean isEmpty() {
+        return this.list.isEmpty();
+    }
+
 }

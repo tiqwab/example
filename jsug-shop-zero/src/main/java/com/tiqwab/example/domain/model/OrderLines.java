@@ -45,4 +45,12 @@ public class OrderLines implements Serializable {
         return this.list.isEmpty();
     }
 
+    public void clear() {
+        this.list.clear();
+    }
+
+    public int size() {
+        return this.list.size();
+    }
+
 }

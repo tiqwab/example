@@ -1,11 +1,7 @@
 package com.tiqwab.example;
 
-import com.tiqwab.example.domain.model.Account;
-import com.tiqwab.example.domain.model.Category;
-import com.tiqwab.example.domain.model.Goods;
-import com.tiqwab.example.domain.repository.AccountRepository;
-import com.tiqwab.example.domain.repository.CategoryRepository;
-import com.tiqwab.example.domain.repository.GoodsRepository;
+import com.tiqwab.example.domain.model.*;
+import com.tiqwab.example.domain.repository.*;
 import lombok.extern.slf4j.Slf4j;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,6 +25,12 @@ public class DatabaseLoader implements CommandLineRunner {
 
     @Autowired
     GoodsRepository goodsRepository;
+
+    @Autowired
+    OrderRepository orderRepository;
+
+    @Autowired
+    OrderLineRepository orderLineRepository;
 
     @Override
     public void run(String... args) throws Exception {
@@ -67,5 +69,19 @@ public class DatabaseLoader implements CommandLineRunner {
                 .category(cdCategory)
                 .build();
         goodsRepository.save(cd1);
+
+        final DemoOrder order = DemoOrder.builder()
+                .email(user.getEmail())
+                .orderDate(LocalDate.now())
+                .build();
+        orderRepository.save(order);
+
+        final OrderLine orderLine = OrderLine.builder()
+                .lineNo(1)
+                .order(order)
+                .goods(book1)
+                .quantity(1)
+                .build();
+        orderLineRepository.save(orderLine);
     }
 }

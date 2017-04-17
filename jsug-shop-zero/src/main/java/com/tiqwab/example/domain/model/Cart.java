@@ -32,4 +32,8 @@ public class Cart {
         return orderLines.isEmpty();
     }
 
+    public void clear() {
+        this.orderLines.clear();
+    }
+
 }

@@ -1,14 +1,22 @@
 package com.tiqwab.example.domain.model;
 
-import lombok.Builder;
-import lombok.Data;
+import lombok.*;
 
+import javax.persistence.*;
 import java.io.Serializable;
 
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
+@Entity
 public class OrderLine implements Serializable {
 
+    @Id @GeneratedValue
+    private Long id;
+    @ManyToOne
+    private DemoOrder order;
+    @OneToOne
     private Goods goods;
     private Integer quantity;
     private Integer lineNo;

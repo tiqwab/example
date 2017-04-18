@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>商品一覧</title>
+</head>
+<body>
+
+<nav role="navigation">
+    <div>
+        <a th:href="@{/}"><span></span></a>
+    </div>
+    <div>
+        <ul>
+            <li>
+                <a th:href="@{/}" href="../goods/showGoods.html">ホーム</a>
+            </li>
+            <li>
+                <a th:href="@{/cart}" href="../cart/viewCart.html">カート</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+
+<div>
+    <div>
+        該当の商品が存在しません。
+    </div>
+</div>
+
+</body>
+</html>

@@ -5,6 +5,7 @@ import com.tiqwab.example.domain.repository.GoodsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.access.method.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,6 +22,11 @@ public class GoodsService {
     }
 
     public Goods findOne(Long goodsId) {
-        return goodsRepository.findOne(goodsId);
+        Goods goods = goodsRepository.findOne(goodsId);
+        if (goods == null) {
+            throw new GoodsNotFoundException("There is not goods: " + goodsId);
+        }
+        return goods;
     }
+
 }

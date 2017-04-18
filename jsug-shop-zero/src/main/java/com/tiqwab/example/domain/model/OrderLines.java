@@ -1,6 +1,7 @@
 package com.tiqwab.example.domain.model;
 
 import lombok.Getter;
+import org.springframework.cache.annotation.Cacheable;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Stream;
 
+@Cacheable("orderLines")
 public class OrderLines implements Serializable {
 
     @Getter

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>エラー</title>
+</head>
+<body>
+
+<nav role="navigation">
+    <div>
+        <div>
+            <a th:href="@{/}"><span></span></a>
+        </div>
+        <div>
+            <ul>
+                <li>
+                    <a th:href="@{/}" href="goods/showGoods.html">ホーム</a>
+                </li>
+                <li>
+                    <a th:href="@{/cart}" href="cart/viewCart.html">カート</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div>
+    <div>
+        エラーが発生しました。<a th:href="@{/}" href="goods/showGoods.html">ホーム</a>に戻ってやり直して下さい。
+    </div>
+</div>
+
+</body>
+</html>

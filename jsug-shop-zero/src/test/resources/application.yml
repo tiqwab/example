@@ -4,7 +4,7 @@ spring:
         hibernate:
             ddl-auto: update
     session:
-        store-type: redis
+        store-type: hash_map
 
 logging:
     level:

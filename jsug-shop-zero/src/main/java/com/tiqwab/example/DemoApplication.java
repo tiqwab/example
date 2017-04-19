@@ -10,11 +10,13 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.annotation.ScopedProxyMode;
 import org.springframework.data.jpa.convert.threeten.Jsr310JpaConverters;
+import org.springframework.session.data.redis.config.annotation.web.http.EnableRedisHttpSession;
 import org.springframework.web.context.WebApplicationContext;
 
 @SpringBootApplication
 @EntityScan(basePackageClasses = {DemoApplication.class, Jsr310JpaConverters.class})
 @EnableCaching
+@EnableRedisHttpSession
 public class DemoApplication {
 
 	public static void main(String[] args) {

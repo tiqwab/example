@@ -1,0 +1,26 @@
+version: '2'
+services:
+    app1:
+        image: boot-exec
+        ports:
+            - "8080:8080"
+        volumes:
+            - .:/app
+        environment:
+            JAR_NAME: "jsug-shop-zero-0.0.1-SNAPSHOT.jar"
+    app2:
+        image: boot-exec
+        ports:
+            - "8081:8080"
+        volumes:
+            - .:/app
+        environment:
+            JAR_NAME: "jsug-shop-zero-0.0.1-SNAPSHOT.jar"
+    app3:
+        image: boot-exec
+        ports:
+            - "8082:8080"
+        volumes:
+            - .:/app
+        environment:
+            JAR_NAME: "jsug-shop-zero-0.0.1-SNAPSHOT.jar"

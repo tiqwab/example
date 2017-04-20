@@ -14,7 +14,6 @@ spring:
         #                     create-target: create.sql
     session:
         store-type: redis
-        # store-type: hash_map
 
 logging:
     level:
@@ -22,3 +21,11 @@ logging:
             hibernate:
                 sql: DEBUG
                 type: TRACE
+
+
+---
+
+spring:
+    profiles: test
+    session:
+        store-type: none

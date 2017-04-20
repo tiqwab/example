@@ -1,5 +1,6 @@
 package com.tiqwab.example.app;
 
+import com.tiqwab.example.SecurityConfig;
 import com.tiqwab.example.domain.model.Account;
 import com.tiqwab.example.domain.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,7 +38,7 @@ public class AccountController {
 
         Account account = Account.builder()
                 .name(form.getName())
-                .password(Account.PASSWORD_ENCODER.encode(form.getPassword()))
+                .password(SecurityConfig.PASSWORD_ENCODER.encode(form.getPassword()))
                 .email(form.getEmail())
                 .birthDay(form.getBirthDay())
                 .zip(form.getZip())

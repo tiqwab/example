@@ -3,12 +3,13 @@ package com.tiqwab.example.domain.model;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
 @Slf4j
-public class Cart {
+public class Cart implements Serializable {
 
     @Getter
     private OrderLines orderLines;

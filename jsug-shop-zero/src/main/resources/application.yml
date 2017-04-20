@@ -3,8 +3,18 @@ spring:
         show-sql: true
         hibernate:
             ddl-auto: update
+        # To generate DDL
+        # properties:
+        #     javax:
+        #         persistence:
+        #             schema-generation:
+        #                 create-source: metadata
+        #                 scripts:
+        #                     action: create
+        #                     create-target: create.sql
     session:
         store-type: redis
+        # store-type: hash_map
 
 logging:
     level:

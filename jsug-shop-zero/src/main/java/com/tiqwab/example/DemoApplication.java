@@ -1,6 +1,5 @@
 package com.tiqwab.example;
 
-import com.tiqwab.example.domain.model.CachingCart;
 import com.tiqwab.example.domain.model.Cart;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -28,7 +27,7 @@ public class DemoApplication {
     // Cart is created when necessary (not when user's access executes controller methods)
 	@Scope(value = WebApplicationContext.SCOPE_SESSION, proxyMode = ScopedProxyMode.TARGET_CLASS)
 	Cart cart() {
-		return new CachingCart();
+		return new Cart();
 	}
 
 }

@@ -31,7 +31,7 @@ dependencies {
 	compile('org.springframework.session:spring-session')
 	compile('org.springframework.boot:spring-boot-starter-data-redis')
     compile('mysql:mysql-connector-java:6.0.6')
-	// runtime('com.h2database:h2')
+	runtime('com.h2database:h2')
 	compileOnly('org.projectlombok:lombok')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
 }

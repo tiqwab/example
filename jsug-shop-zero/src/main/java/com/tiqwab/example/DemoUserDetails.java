@@ -11,7 +11,8 @@ public class DemoUserDetails extends User {
     private Account account;
 
     public DemoUserDetails(Account account) {
-        super(account.getName(), account.getPassword(), AuthorityUtils.createAuthorityList(account.getRoles()));
+        super(account.getName(), account.getPassword(),
+                AuthorityUtils.createAuthorityList((account.getRoles() != null ? account.getRoles() : new String[0])));
         this.account = account;
     }
 

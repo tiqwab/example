@@ -11,8 +11,11 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
+/**
+ * Not used.
+ */
 @Slf4j
-@Component
+// @Component
 public class DatabaseLoader implements CommandLineRunner {
 
     private static final Logger logger = LoggerFactory.getLogger(DatabaseLoader.class);
@@ -36,7 +39,7 @@ public class DatabaseLoader implements CommandLineRunner {
     public void run(String... args) throws Exception {
         final Account user = Account.builder()
                 .name("user")
-                .password(Account.PASSWORD_ENCODER.encode("user"))
+                .password(SecurityConfig.PASSWORD_ENCODER.encode("user"))
                 .email("user@user.com")
                 .birthDay(LocalDate.of(2017, 4, 1))
                 .zip("111-1111")

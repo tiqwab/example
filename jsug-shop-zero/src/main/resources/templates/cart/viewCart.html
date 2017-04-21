@@ -40,7 +40,7 @@
             </tr>
             </thead>
             <tbody>
-            <!-- TODO: orderLines.list? -->
+            <!-- 'row' has the extra information about the list -->
             <!-- http://qiita.com/NagaokaKenichi/items/c6d1b76090ef5ef39482#%E3%82%B9%E3%83%86%E3%83%BC%E3%82%BF%E3%82%B9%E5%A4%89%E6%95%B0 -->
             <tr th:each="orderLine, row : ${orderLines.list}">
                 <td th:text="${orderLine.goods.goodsName}">goodsName</td>
@@ -57,7 +57,8 @@
 
     <p>
         <a th:href="@{/}" href="../goods/showGoods.html">買い物に戻る</a>
-        <!-- TODO: what is '@{/order(confirm)}'? -->
+        <!-- '()' in the url means the request parameters -->
+        <!-- http://www.thymeleaf.org/doc/tutorials/2.1/usingthymeleaf_ja.html#%E3%83%AA%E3%83%B3%E3%82%AFurl -->
         <a th:href="@{/order(confirm)}" href="../order/confirm.html">注文画面へ</a>
     </p>
 </div>

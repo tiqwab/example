@@ -1,0 +1,22 @@
+spring:
+    jpa:
+        show-sql: true
+        hibernate:
+            ddl-auto: update
+    session:
+        store-type: redis
+
+logging:
+    level:
+        org:
+            hibernate:
+                sql: DEBUG
+                type: TRACE
+
+
+---
+
+spring:
+    profiles: test
+    session:
+        store-type: none

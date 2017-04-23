@@ -1,0 +1,18 @@
+version: '2'
+services:
+    cache-server:
+        image: redis:alpine
+        ports:
+            - "6379:6379"
+    app:
+        image: boot-exec
+        depends_on:
+            - cache-server
+        ports:
+            - "8080:8080"
+        volumes:
+            - .:/app
+        environment:
+            JAR_NAME: "boot-with-redis-0.0.1-SNAPSHOT.jar"
+            spring.redis.host: "cache-server"
+            spring.redis.port: "6379"

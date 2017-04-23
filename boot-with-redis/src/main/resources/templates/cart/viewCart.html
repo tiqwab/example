@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>買い物カゴ</title>
+</head>
+<body>
+
+<table>
+    <thead>
+    <tr>
+        <th>Name</th>
+        <th>Quantity</th>
+        <th>Price</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="line : ${cart.lines}">
+        <td th:text="${line.name}">Foo</td>
+        <td th:text="${line.quantity}">1</td>
+        <td th:text="${line.price}">100</td>
+    </tr>
+    </tbody>
+</table>
+
+<form th:action="@{/logout}" method="post">
+    <input type="submit" name="logout" value="logout" />
+</form>
+
+</body>
+</html>

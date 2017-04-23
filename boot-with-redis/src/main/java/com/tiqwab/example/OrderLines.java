@@ -3,12 +3,13 @@ package com.tiqwab.example;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @ToString
-public class OrderLines {
+public class OrderLines implements Serializable {
 
     @Getter
     private List<OrderLine> lines;

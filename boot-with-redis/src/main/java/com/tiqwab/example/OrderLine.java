@@ -5,10 +5,12 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.ToString;
 
+import java.io.Serializable;
+
 @AllArgsConstructor
 @Builder
 @ToString
-public class OrderLine {
+public class OrderLine implements Serializable {
 
     private Item item;
     @Getter

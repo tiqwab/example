@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'ca.coglinc.javacc' version '2.4.0'
+}
+
+group 'com.tiqwab'
+version '1.0-SNAPSHOT'
+
+sourceCompatibility = 1.8
+
+mainClassName = 'com.tiqwab.example.ParserMain'
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    compile 'org.ow2.asm:asm:5.1'
+    compile 'org.ow2.asm:asm-all:5.1'
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+// --- Tasks ---
+
+compileJjtree {
+    outputDirectory = file("${rootProject.projectDir}/src/main/generated")
+}
+
+compileJavacc {
+    outputDirectory = file("${rootProject.projectDir}/src/main/generated")
+}
+
+task cleanGeneratedFiles(type: Delete) {
+    delete file("${rootProject.projectDir}/src//main/generated")
+}
+clean.dependsOn cleanGeneratedFiles
+
+sourceSets {
+    main {
+        java {
+            srcDir compileJjtree.outputDirectory
+            srcDir compileJavacc.outputDirectory
+        }
+    }
+}
+
+run {
+    standardInput = System.in
+}

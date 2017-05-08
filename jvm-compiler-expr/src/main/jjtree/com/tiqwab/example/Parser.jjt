@@ -1,0 +1,112 @@
+// --- Options ---
+
+options {
+    STATIC = false;
+    JAVA_UNICODE_ESCAPE = true;
+    UNICODE_INPUT = true;
+}
+
+// --- Definition of parser ---
+
+PARSER_BEGIN (Parser)
+
+package com.tiqwab.example;
+
+import com.tiqwab.example.jbc.*;
+
+public class Parser {
+}
+PARSER_END (Parser)
+
+// --- Definition of tokens ---
+
+// White space
+SKIP: {
+    " "
+    | "\t"
+    | "\r"
+    | "\f"
+}
+
+TOKEN: {
+    < NEWLINE: "\n" >
+}
+
+// Operator
+TOKEN: {
+    < ADD: "+" >
+    | < SUBTRACT: "-" >
+    | < MULT: "*" >
+    | < DIV: "/" >
+}
+
+// Symbols
+TOKEN: {
+    < LPAREN: "(" >
+    | <RPAREN: ")" >
+}
+
+// Number
+TOKEN: {
+    < NUMBER: (["0"-"9"])+ >
+}
+
+// --- Translation Scheme ---
+
+// E -> T ("+" T | "-" T)*
+// T -> F ("*" T | "/" F)*
+// F -> N | "(" E ")"
+
+JBCNode Start(): {
+    JBCNode expression;
+} {
+    expression = Expression() <NEWLINE> {
+        return new JBCEval((JBCExpr) expression);
+    }
+}
+
+JBCNode Expression(): {
+    JBCNode term1;
+    JBCNode term2;
+    JBCNode expr;
+} {
+    term1 = Term() { expr = term1; } (
+        <ADD> term2 = Term() {
+            expr = new JBCBinaryOperator("+", expr, term2);
+        }
+        | <SUBTRACT> term2 = Term() {
+            expr = new JBCBinaryOperator("-", expr, term2);
+        }
+    )* {
+        return expr;
+    }
+}
+
+JBCNode Term(): {
+    JBCNode factor1;
+    JBCNode factor2;
+    JBCNode term;
+} {
+    factor1 = Factor() { term = factor1; } ( 
+        <MULT> factor2 = Factor() {
+            term = new JBCBinaryOperator("*", term, factor2);
+        }
+        | <DIV> factor2 = Factor() {
+            term = new JBCBinaryOperator("/", term, factor2);
+        }
+    )* {
+        return term;
+    }
+}
+
+JBCNode Factor(): {
+    Token number;
+    JBCNode expr;
+} {
+    number = <NUMBER> {
+        return new JBCInteger(number.image);
+    }
+    | <LPAREN> expr = Expression() <RPAREN> {
+        return expr;
+    }
+}

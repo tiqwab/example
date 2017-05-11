@@ -1,0 +1,107 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Resources:
+    # --- VPC ---
+    EbJavaSampleVPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsSupport: "true"
+            EnableDnsHostnames: "true"
+            InstanceTenancy: default
+            Tags:
+                - Key: Name
+                  Value: EbJavaSampleVPC
+    # --- Subnet ---
+    EbJavaSamplePublicSubnet1a:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1a
+            CidrBlock: 10.0.0.0/24
+            Tags:
+                - Key: Name
+                  Value: EbJavaSamplePublicSubnet1a
+            VpcId: !Ref EbJavaSampleVPC
+    EbJavaSamplePublicSubnet1c:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1c
+            CidrBlock: 10.0.1.0/24
+            Tags:
+                - Key: Name
+                  Value: EbJavaSamplePublicSubnet1c
+            VpcId: !Ref EbJavaSampleVPC
+    EbJavaSamplePrivateSubnet1a:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1a
+            CidrBlock: 10.0.2.0/24
+            Tags:
+                - Key: Name
+                  Value: EbJavaSamplePrivateSubnet1a
+            VpcId: !Ref EbJavaSampleVPC
+    EbJavaSamplePrivateSubnet1c:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1c
+            CidrBlock: 10.0.3.0/24
+            Tags:
+                - Key: Name
+                  Value: EbJavaSamplePrivateSubnet1c
+            VpcId: !Ref EbJavaSampleVPC
+    # --- Internet Gateway ---
+    EbJavaSampleIGW:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: EbJavaSampleIGW
+    AttackGateway:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId: !Ref EbJavaSampleVPC
+            InternetGatewayId: !Ref EbJavaSampleIGW
+    # --- Route Table ---
+    EbJavaSamplePublicRouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref EbJavaSampleVPC
+            Tags:
+                - Key: Name
+                  Value: EbJavaSamplePublicRouteTable
+    EbJavaSamplePrivateRouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref EbJavaSampleVPC
+            Tags:
+                - Key: Name
+                  Value: EbJavaSamplePrivateRouteTable
+    PubicRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref EbJavaSamplePublicRouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref EbJavaSampleIGW
+    AssociateRouteTableToPublicSubnet1a:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref EbJavaSamplePublicSubnet1a
+            RouteTableId: !Ref EbJavaSamplePublicRouteTable
+    AssociateRouteTableToPublicSubnet1c:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref EbJavaSamplePublicSubnet1c
+            RouteTableId: !Ref EbJavaSamplePublicRouteTable
+    AssociateRouteTableToPrivateSubnet1a:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref EbJavaSamplePrivateSubnet1a
+            RouteTableId: !Ref EbJavaSamplePrivateRouteTable
+    AssociateRouteTableToPrivateSubnet1c:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref EbJavaSamplePrivateSubnet1c
+            RouteTableId: !Ref EbJavaSamplePrivateRouteTable

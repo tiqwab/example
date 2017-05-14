@@ -1,0 +1,188 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+    ImageId:
+        # String, Number, etc.
+        Type: "String"
+        Default: "ami-923d12f5"
+    KeyName:
+        Type: "String"
+        Default: "aws-sample-key"
+Mappings:
+    TargetAZ:
+        "ap-northeast-1":
+            default: ["ap-northeast-1a", "ap-northeast-1c"]
+Resources:
+    # --- VPC ---
+    SampleCloudWatchVPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsSupport: "true"
+            EnableDnsHostnames: "true"
+            InstanceTenancy: default
+            Tags:
+                - Key: Name
+                  Value: SampleCloudWatchVPC
+    # --- Subnet ---
+    SampleCloudWatchPublicSubnet1a:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1a
+            CidrBlock: 10.0.0.0/24
+            Tags:
+                - Key: Name
+                  Value: SampleCloudWatchPublicSubnet1a
+            VpcId: !Ref SampleCloudWatchVPC
+    SampleCloudWatchPublicSubnet1c:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1c
+            CidrBlock: 10.0.1.0/24
+            Tags:
+                - Key: Name
+                  Value: SampleCloudWatchPublicSubnet1c
+            VpcId: !Ref SampleCloudWatchVPC
+    # --- Internet Gateway ---
+    SampleCloudWatchIGW:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: SampleCloudWatchIGW
+    AttackGateway:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId: !Ref SampleCloudWatchVPC
+            InternetGatewayId: !Ref SampleCloudWatchIGW
+    # --- Route Table ---
+    SampleCloudWatchPublicRouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref SampleCloudWatchVPC
+            Tags:
+                - Key: Name
+                  Value: SampleCloudWatchPublicRouteTable
+    SampleCloudWatchPublicRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref SampleCloudWatchPublicRouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref SampleCloudWatchIGW
+    AssociateRouteTableToSampleCloudWatchPublicSubnet1a:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref SampleCloudWatchPublicSubnet1a
+            RouteTableId: !Ref SampleCloudWatchPublicRouteTable
+    AssociateRouteTableToSampleCloudWatchPublicSubnet1c:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref SampleCloudWatchPublicSubnet1c
+            RouteTableId: !Ref SampleCloudWatchPublicRouteTable
+    # --- Security Group ---
+    InstanceSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Sample security group for auto scaling
+            VpcId: !Ref SampleCloudWatchVPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: '80'
+                  ToPort: '80'
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: '22'
+                  ToPort: '22'
+                  CidrIp: 0.0.0.0/0
+            SecurityGroupEgress:
+                - IpProtocol: "-1"
+                  CidrIp: 0.0.0.0/0
+    # --- Laungh Configurations ---
+    LaunchConfiguration:
+        Type: AWS::AutoScaling::LaunchConfiguration
+        Properties:
+            ImageId: !Ref ImageId
+            InstanceType: "t2.micro"
+            KeyName: !Ref KeyName
+            SecurityGroups:
+                - !Ref InstanceSecurityGroup
+            AssociatePublicIpAddress: "true"
+            InstanceMonitoring: "false"
+            BlockDeviceMappings:
+                - DeviceName: "/dev/xvda"
+                  Ebs:
+                      VolumeSize: "8"
+                      VolumeType: "gp2"
+                      DeleteOnTermination: "true"
+    # --- Auto Scaling Groups ---
+    AutoScalingGroup:
+        Type: AWS::AutoScaling::AutoScalingGroup
+        Properties:
+            AvailabilityZones: !FindInMap [TargetAZ, !Ref "AWS::Region", "default"]
+            VPCZoneIdentifier:
+                - !Ref SampleCloudWatchPublicSubnet1a
+                - !Ref SampleCloudWatchPublicSubnet1c
+            LaunchConfigurationName: !Ref LaunchConfiguration
+            DesiredCapacity: "1"
+            MinSize: "1"
+            MaxSize: "2"
+            HealthCheckType: "EC2"
+            HealthCheckGracePeriod: 300
+            Cooldown: 300
+            # LoadBalancerNames:
+            #     - !Ref ElasticLoadBalancer
+            # MetricsCollection:
+            #     - Granularity: ""
+            #       Metrics:
+            #           - ""
+    # --- Scaling Policy ---
+    ScaleOutPolicy:
+        Type: AWS::AutoScaling::ScalingPolicy
+        Properties:
+            AdjustmentType: "ChangeInCapacity"
+            PolicyType: "SimpleScaling"
+            Cooldown: "60"
+            AutoScalingGroupName: !Ref AutoScalingGroup
+            ScalingAdjustment: 1
+    ScaleInPolicy:
+        Type: AWS::AutoScaling::ScalingPolicy
+        Properties:
+            AdjustmentType: "ChangeInCapacity"
+            PolicyType: "SimpleScaling"
+            Cooldown: "60"
+            AutoScalingGroupName: !Ref AutoScalingGroup
+            ScalingAdjustment: -1
+    # --- Cloud Watch ---
+    CPUAlarmHigh:
+        Type: AWS::CloudWatch::Alarm
+        Properties:
+            AlarmDescription: "Alarm if CPU too high or metric disappears indicating instance is down"
+            Namespace: "AWS/EC2"
+            MetricName: CPUUtilization
+            Statistic: Average
+            ComparisonOperator: GreaterThanThreshold
+            Threshold: "50"
+            Period: "300"
+            EvaluationPeriods: "1"
+            AlarmActions:
+                - !Ref ScaleOutPolicy
+            Dimensions:
+                - Name: "AutoScalingGroupName"
+                  Value: !Ref AutoScalingGroup
+    CPUAlarmLow:
+        Type: AWS::CloudWatch::Alarm
+        Properties:
+            AlarmDescription: "Alarm if CPU too low"
+            Namespace: "AWS/EC2"
+            MetricName: CPUUtilization
+            Statistic: Average
+            ComparisonOperator: LessThanThreshold
+            Threshold: "10"
+            Period: "300"
+            EvaluationPeriods: "1"
+            AlarmActions:
+                - !Ref ScaleInPolicy
+            Dimensions:
+                - Name: "AutoScalingGroupName"
+                  Value: !Ref AutoScalingGroup

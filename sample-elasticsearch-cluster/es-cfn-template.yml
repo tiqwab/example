@@ -1,0 +1,109 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+    ImageId:
+        # String, Number, etc.
+        Type: "String"
+        Default: "ami-923d12f5"
+    KeyName:
+        Type: "String"
+        Default: "aws-sample-key"
+Mappings:
+    TargetAZ:
+        "ap-northeast-1":
+            default: ["ap-northeast-1a", "ap-northeast-1c"]
+Resources:
+    # --- VPC ---
+    SampleESVPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsSupport: "true"
+            EnableDnsHostnames: "true"
+            InstanceTenancy: default
+            Tags:
+                - Key: Name
+                  Value: SampleESVPC
+    # --- Subnet ---
+    SampleESPublicSubnet1a:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1a
+            CidrBlock: 10.0.0.0/24
+            Tags:
+                - Key: Name
+                  Value: SampleESPublicSubnet1a
+            VpcId: !Ref SampleESVPC
+    SampleESPublicSubnet1c:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1c
+            CidrBlock: 10.0.1.0/24
+            Tags:
+                - Key: Name
+                  Value: SampleESPublicSubnet1c
+            VpcId: !Ref SampleESVPC
+    # --- Internet Gateway ---
+    SampleESIGW:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: SampleESIGW
+    AttackGateway:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId: !Ref SampleESVPC
+            InternetGatewayId: !Ref SampleESIGW
+    # --- Route Table ---
+    SampleESPublicRouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref SampleESVPC
+            Tags:
+                - Key: Name
+                  Value: SampleESPublicRouteTable
+    SampleESPublicRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref SampleESPublicRouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref SampleESIGW
+    AssociateRouteTableToSampleESPublicSubnet1a:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref SampleESPublicSubnet1a
+            RouteTableId: !Ref SampleESPublicRouteTable
+    AssociateRouteTableToSampleESPublicSubnet1c:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref SampleESPublicSubnet1c
+            RouteTableId: !Ref SampleESPublicRouteTable
+    # --- Security Group ---
+    InstanceSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Sample security group for auto scaling
+            VpcId: !Ref SampleESVPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: '80'
+                  ToPort: '80'
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: '22'
+                  ToPort: '22'
+                  CidrIp: 0.0.0.0/0
+                # for elasticsearch
+                - IpProtocol: tcp
+                  FromPort: '9200'
+                  ToPort: '9200'
+                  CidrIp: 0.0.0.0/0
+                - IpProtocol: tcp
+                  FromPort: '9300'
+                  ToPort: '9300'
+                  CidrIp: 0.0.0.0/0
+            SecurityGroupEgress:
+                - IpProtocol: "-1"
+                  CidrIp: 0.0.0.0/0

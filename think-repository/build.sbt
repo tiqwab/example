@@ -10,6 +10,8 @@ lazy val root = (project in file(".")).
     name := "think-repository",
     libraryDependencies ++= Seq(
       scalaTest % Test,
-      jodaTime
+      jodaTime,
+      scalikejdbc,
+      scalikejdbcConfig
     )
   )

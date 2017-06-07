@@ -4,7 +4,9 @@ import scala.util.Try
 
 trait Repository[ID <: Identifier[_], E <: Entity[ID]] {
 
-  def save(entity: E): E
-  def findById(id: ID): Try[E]
+  type Ctx = EntityIOContext
+
+  def save(entity: E)(implicit ct: Ctx): E
+  def findById(id: ID)(implicit ctx: Ctx): Try[E]
 
 }

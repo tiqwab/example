@@ -12,6 +12,9 @@ lazy val root = (project in file(".")).
       scalaTest % Test,
       jodaTime,
       scalikejdbc,
-      scalikejdbcConfig
+      scalikejdbcConfig,
+      scalikejdbcTest,
+      logback,
+      h2
     )
   )

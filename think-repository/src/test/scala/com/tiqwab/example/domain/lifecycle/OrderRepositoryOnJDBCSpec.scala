@@ -1,7 +1,9 @@
 package com.tiqwab.example.domain.lifecycle
 
-import com.tiqwab.example.domain.model.{Order, OrderId}
+import com.tiqwab.example.domain.model.{Order, OrderId, Storer}
 import com.tiqwab.example.domain.support.{EntityIOContext, EntityIOContextOnJDBC, EntityNotFoundException}
+import com.tiqwab.example.infrastructure.identifier.IdentifierService
+import org.joda.time.DateTime
 import org.scalatest.fixture.FlatSpec
 import org.scalatest.Matchers
 import scalikejdbc.DBSession
@@ -17,15 +19,29 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   behavior of "OrderRepositoryOnJDBC"
 
   override def fixture(implicit session: DBSession): Unit = {
-    sql"INSERT INTO orders (id, storerkey, order_date) VALUES (1, 'DEMO1', '2017-06-08 12:00:00')".update.apply()
+
   }
+
+  def genId: Long = IdentifierService().generate
 
   def withContext[A](f: (EntityIOContext) => A)(implicit session: DBSession): A =
     f(EntityIOContextOnJDBC(session))
 
+  it should "store a order" in { implicit session =>
+    withContext { implicit ctx =>
+      val order = Order(OrderId(genId), Storer("DEMO1"), DateTime.now())
+      val orderTry = OrderRepository.ofJDBC.save(order)
+      orderTry.isSuccess shouldBe true
+    }
+  }
+
   it should "find a order if exists" in { implicit session =>
     withContext { implicit ctx =>
-      val orderTry = OrderRepository.ofJDBC.findById(OrderId(1))
+      val id = genId
+      OrderRepository.ofJDBC.save(
+        Order(OrderId(id), Storer("DEMO1"), DateTime.now())
+      )
+      val orderTry = OrderRepository.ofJDBC.findById(OrderId(id))
       orderTry.isSuccess shouldBe true
     }
   }

@@ -8,8 +8,8 @@ import org.scalatest.fixture.FlatSpec
 import org.scalatest.Matchers
 import scalikejdbc.DBSession
 import scalikejdbc.config._
-import scalikejdbc.scalatest.AutoRollback
 import scalikejdbc._
+import scalikejdbc.scalatest.AutoRollback
 import org.scalatest.TryValues._
 
 class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback {

@@ -14,6 +14,7 @@ lazy val root = (project in file(".")).
       scalikejdbc,
       scalikejdbcConfig,
       scalikejdbcTest,
+      skinnyORM,
       logback,
       h2
     )

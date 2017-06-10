@@ -40,16 +40,33 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
       val id = genId
       val order = OrderRepository.ofJDBC.save(
         Order(OrderId(id), Storer("DEMO1"), DateTime.now())
-      )
+      ).success.get
       val orderTry = OrderRepository.ofJDBC.findById(OrderId(id))
       orderTry.isSuccess shouldBe true
-      orderTry.success shouldBe order
     }
   }
 
   it should "find nothing if not exist" in { implicit session =>
     withContext { implicit ctx =>
       val orderTry = OrderRepository.ofJDBC.findById(OrderId(2))
+      orderTry.failure.exception shouldBe a [EntityNotFoundException]
+    }
+  }
+
+  it should "delete a order if exists" in { implicit session =>
+    withContext { implicit ctx =>
+      val id = genId
+      val order = OrderRepository.ofJDBC.save(
+        Order(OrderId(id), Storer("DEMO1"), DateTime.now())
+      ).success.get
+      val orderTry = OrderRepository.ofJDBC.deleteById(OrderId(id))
+      orderTry.isSuccess shouldBe true
+    }
+  }
+
+  it should "delete nothing if not exist" in { implicit session =>
+    withContext { implicit ctx =>
+      val orderTry = OrderRepository.ofJDBC.deleteById(OrderId(2))
       orderTry.failure.exception shouldBe a [EntityNotFoundException]
     }
   }

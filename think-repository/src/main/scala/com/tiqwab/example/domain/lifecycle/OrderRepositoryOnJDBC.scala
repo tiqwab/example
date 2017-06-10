@@ -32,4 +32,13 @@ class OrderRepositoryOnJDBC extends OrderRepository with RepositoryOnJDBC[OrderI
     }
   }
 
+  override def deleteById(id: OrderId)(implicit ctx: Ctx): Try[Order] = withDBSession(ctx) { implicit session =>
+    for {
+      order <- findById(id)
+    } yield {
+      OrderRecord.deleteById(id.value)
+      order
+    }
+  }
+
 }

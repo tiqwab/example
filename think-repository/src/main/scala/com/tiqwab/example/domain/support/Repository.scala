@@ -8,5 +8,6 @@ trait Repository[ID <: Identifier[_], E <: Entity[ID]] {
 
   def save(entity: E)(implicit ctx: Ctx): Try[E]
   def findById(id: ID)(implicit ctx: Ctx): Try[E]
+  def deleteById(id: ID)(implicit ctx: Ctx): Try[E]
 
 }

@@ -15,11 +15,18 @@ class OrderRepositoryOnJDBC extends OrderRepository with RepositoryOnJDBC[OrderI
       val orderDate = entity.orderDate
 
       val c = OrderRecord.column
-      OrderRecord.createWithNamedValues(
-        c.id -> id,
+
+      val updateResult = OrderRecord.updateById(id).withNamedValues(
         c.storerkey -> storer,
         c.orderDate -> orderDate
       )
+      if (updateResult == 0) {
+        OrderRecord.createWithNamedValues(
+          c.id -> id,
+          c.storerkey -> storer,
+          c.orderDate -> orderDate
+        )
+      }
       entity
     }
   }

@@ -12,6 +12,8 @@ import scalikejdbc._
 import scalikejdbc.scalatest.AutoRollback
 import org.scalatest.TryValues._
 
+import scala.util.{Failure, Success}
+
 class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback {
 
   DBs.setupAll()
@@ -27,11 +29,24 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   def withContext[A](f: (EntityIOContext) => A)(implicit session: DBSession): A =
     f(EntityIOContextOnJDBC(session))
 
-  it should "store a order" in { implicit session =>
+  it should "store a new order" in { implicit session =>
     withContext { implicit ctx =>
       val order = Order(OrderId(genId), Storer("DEMO1"), DateTime.now())
       val orderTry = OrderRepository.ofJDBC.save(order)
       orderTry.isSuccess shouldBe true
+    }
+  }
+
+  it should "store the order and update" in { implicit session =>
+    withContext { implicit ctx =>
+      val id = OrderId(genId)
+      val order = Order(id, Storer("DEMO1"), DateTime.now())
+      OrderRepository.ofJDBC.save(order)
+      OrderRepository.ofJDBC.save(order.copy(storer = Storer("DEMO2")))
+      OrderRepository.ofJDBC.findById(id) match {
+        case Success(newOrder) => newOrder.storer shouldBe Storer("DEMO2")
+        case Failure(e) => fail(s"Cannot find by id", e)
+      }
     }
   }
 

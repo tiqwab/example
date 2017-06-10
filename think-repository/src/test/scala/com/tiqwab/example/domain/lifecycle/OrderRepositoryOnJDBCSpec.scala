@@ -1,6 +1,6 @@
 package com.tiqwab.example.domain.lifecycle
 
-import com.tiqwab.example.domain.model.{Order, OrderId, Storer}
+import com.tiqwab.example.domain.model.{Order, OrderId, Storer, StorerId}
 import com.tiqwab.example.domain.support.{EntityIOContext, EntityIOContextOnJDBC, EntityNotFoundException}
 import com.tiqwab.example.infrastructure.identifier.IdentifierService
 import org.joda.time.DateTime
@@ -21,7 +21,9 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   behavior of "OrderRepositoryOnJDBC"
 
   override def fixture(implicit session: DBSession): Unit = {
-
+    withContext { implicit ctx =>
+      val storer = StorerRepository.ofJDBC.save(Storer(StorerId(1), "DEMO1")).success.value
+    }
   }
 
   def genId: Long = IdentifierService().generate
@@ -31,7 +33,8 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
 
   it should "store a new order" in { implicit session =>
     withContext { implicit ctx =>
-      val order = Order(OrderId(genId), Storer("DEMO1"), DateTime.now())
+      val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
+      val order = Order(OrderId(genId), storer, DateTime.now())
       val orderTry = OrderRepository.ofJDBC.save(order)
       orderTry.isSuccess shouldBe true
     }
@@ -40,11 +43,12 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   it should "store the order and update" in { implicit session =>
     withContext { implicit ctx =>
       val id = OrderId(genId)
-      val order = Order(id, Storer("DEMO1"), DateTime.now())
+      val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
+      val order = Order(id, storer, DateTime.now())
       OrderRepository.ofJDBC.save(order)
-      OrderRepository.ofJDBC.save(order.copy(storer = Storer("DEMO2")))
+      OrderRepository.ofJDBC.save(order.copy(orderDate = order.orderDate.minusDays(1)))
       OrderRepository.ofJDBC.findById(id) match {
-        case Success(newOrder) => newOrder.storer shouldBe Storer("DEMO2")
+        case Success(newOrder) => newOrder.orderDate shouldBe order.orderDate.minusDays(1)
         case Failure(e) => fail(s"Cannot find by id", e)
       }
     }
@@ -53,8 +57,9 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   it should "find a order if exists" in { implicit session =>
     withContext { implicit ctx =>
       val id = genId
+      val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
       val order = OrderRepository.ofJDBC.save(
-        Order(OrderId(id), Storer("DEMO1"), DateTime.now())
+        Order(OrderId(id), storer, DateTime.now())
       ).success.get
       val orderTry = OrderRepository.ofJDBC.findById(OrderId(id))
       orderTry.isSuccess shouldBe true
@@ -71,8 +76,9 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   it should "delete a order if exists" in { implicit session =>
     withContext { implicit ctx =>
       val id = genId
+      val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
       val order = OrderRepository.ofJDBC.save(
-        Order(OrderId(id), Storer("DEMO1"), DateTime.now())
+        Order(OrderId(id), storer, DateTime.now())
       ).success.get
       val orderTry = OrderRepository.ofJDBC.deleteById(OrderId(id))
       orderTry.isSuccess shouldBe true

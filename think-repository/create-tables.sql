@@ -1,6 +1,12 @@
 CREATE TABLE IF NOT EXISTS orders (
   serialkey bigint not null auto_increment primary key,
   id bigint not null unique,
-  storerkey nvarchar(20) not null,
+  storer_id Long not null,
   order_date timestamp
+);
+
+CREATE TABLE IF NOT EXISTS storer (
+  serialkey bigint not null auto_increment primary key,
+  id bigint not null unique,
+  name nvarchar(50)
 );

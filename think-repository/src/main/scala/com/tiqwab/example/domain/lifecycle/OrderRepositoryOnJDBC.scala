@@ -1,6 +1,6 @@
 package com.tiqwab.example.domain.lifecycle
 
-import com.tiqwab.example.domain.model.{Order, OrderId, Storer}
+import com.tiqwab.example.domain.model.{Order, OrderId, Storer, StorerId}
 import com.tiqwab.example.domain.support.{EntityNotFoundException, RepositoryOnJDBC}
 import com.tiqwab.example.infrastructure.db.OrderRecord
 
@@ -11,19 +11,19 @@ class OrderRepositoryOnJDBC extends OrderRepository with RepositoryOnJDBC[OrderI
   override def save(entity: Order)(implicit ctx: Ctx): Try[Order] = withDBSession(ctx) { implicit session =>
     Try {
       val id = entity.id.value
-      val storer = entity.storer.name
+      val storerId = entity.storer.id.value
       val orderDate = entity.orderDate
 
       val c = OrderRecord.column
 
       val updateResult = OrderRecord.updateById(id).withNamedValues(
-        c.storerkey -> storer,
+        c.storerId -> storerId,
         c.orderDate -> orderDate
       )
       if (updateResult == 0) {
         OrderRecord.createWithNamedValues(
           c.id -> id,
-          c.storerkey -> storer,
+          c.storerId -> storerId,
           c.orderDate -> orderDate
         )
       }
@@ -33,9 +33,14 @@ class OrderRepositoryOnJDBC extends OrderRepository with RepositoryOnJDBC[OrderI
 
   override def findById(id: OrderId)(implicit ctx: Ctx): Try[Order] = withDBSession(ctx) { implicit session =>
     Try {
-      OrderRecord.findById(id.value).map { record =>
-        Order(OrderId(record.id), Storer(record.storerkey), record.orderDate)
-      }.getOrElse(throw new EntityNotFoundException((s"$id")))
+      val orderOpt =
+        for {
+          order <- OrderRecord.findById(id.value)
+          storer <- order.storer
+        } yield {
+          Order(OrderId(order.id), Storer(StorerId(storer.id), storer.name), order.orderDate)
+        }
+      orderOpt.getOrElse(throw new EntityNotFoundException((s"$id")))
     }
   }
 

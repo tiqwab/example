@@ -18,11 +18,11 @@ object OrderRecord extends SkinnyCRUDMapper[OrderRecord] {
 
   override def tableName: String = "orders"
 
-  override def extract(rs: WrappedResultSet, orders: ResultName[OrderRecord]): OrderRecord = {
+  override def extract(rs: WrappedResultSet, n: ResultName[OrderRecord]): OrderRecord = {
     OrderRecord(
-      rs.get(orders.id),
-      rs.get(orders.storerkey),
-      rs.get(orders.orderDate)
+      rs.get(n.id),
+      rs.get(n.storerkey),
+      rs.get(n.orderDate)
     )
   }
 

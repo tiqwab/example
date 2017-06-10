@@ -38,11 +38,12 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   it should "find a order if exists" in { implicit session =>
     withContext { implicit ctx =>
       val id = genId
-      OrderRepository.ofJDBC.save(
+      val order = OrderRepository.ofJDBC.save(
         Order(OrderId(id), Storer("DEMO1"), DateTime.now())
       )
       val orderTry = OrderRepository.ofJDBC.findById(OrderId(id))
       orderTry.isSuccess shouldBe true
+      orderTry.success shouldBe order
     }
   }
 

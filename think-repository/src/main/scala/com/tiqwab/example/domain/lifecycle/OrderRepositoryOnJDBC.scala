@@ -12,19 +12,13 @@ class OrderRepositoryOnJDBC extends OrderRepository with RepositoryOnJDBC[OrderI
     Try {
       val id = entity.id.value
       val storer = entity.storer.name
-      // val orderDate = entity.orderDate.toString("yyyy-MM-dd HH:mm:ss")
-      /*
-      val column = OrderRecord.column
+      val orderDate = entity.orderDate
+
+      val c = OrderRecord.column
       OrderRecord.createWithNamedValues(
-        column.id -> id,
-        column.storerkey -> storer,
-        column.orderDate -> entity.orderDate
-      )
-      */
-      OrderRecord.createWithAttributes(
-        ('id, id),
-        ('storerkey, storer),
-        ('order_date, entity.orderDate)
+        c.id -> id,
+        c.storerkey -> storer,
+        c.orderDate -> orderDate
       )
       entity
     }

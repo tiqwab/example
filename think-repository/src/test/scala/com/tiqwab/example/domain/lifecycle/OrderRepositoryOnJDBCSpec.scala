@@ -1,6 +1,6 @@
 package com.tiqwab.example.domain.lifecycle
 
-import com.tiqwab.example.domain.model.{Order, OrderId, Storer, StorerId}
+import com.tiqwab.example.domain.model._
 import com.tiqwab.example.domain.support.{EntityIOContext, EntityIOContextOnJDBC, EntityNotFoundException}
 import com.tiqwab.example.infrastructure.identifier.IdentifierService
 import org.joda.time.DateTime
@@ -31,38 +31,69 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
   def withContext[A](f: (EntityIOContext) => A)(implicit session: DBSession): A =
     f(EntityIOContextOnJDBC(session))
 
-  it should "store a new order" in { implicit session =>
+  it should "store a new order with a detail" in { implicit session =>
     withContext { implicit ctx =>
       val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
-      val order = Order(OrderId(genId), storer, DateTime.now())
+      val orderId = OrderId(genId)
+      val orderDetails = Seq(
+        OrderDetail(id = OrderDetailId(genId), orderId = orderId, sku = "SKU001", qty = 1)
+      )
+      val order = Order(
+        id = orderId,
+        storer = storer,
+        orderDate = DateTime.now(),
+        details = orderDetails
+      )
       val orderTry = OrderRepository.ofJDBC.save(order)
       orderTry.isSuccess shouldBe true
     }
   }
 
-  it should "store the order and update" in { implicit session =>
+  it should "store the order with detail and update" in { implicit session =>
     withContext { implicit ctx =>
-      val id = OrderId(genId)
+      val orderId = OrderId(genId)
       val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
-      val order = Order(id, storer, DateTime.now())
+      val orderDetails = Seq(
+        OrderDetail(id = OrderDetailId(genId), orderId = orderId, sku = "SKU001", qty = 1)
+      )
+      val order = Order(
+        id = orderId,
+        storer = storer,
+        orderDate = DateTime.now(),
+        details = orderDetails
+      )
       OrderRepository.ofJDBC.save(order)
-      OrderRepository.ofJDBC.save(order.copy(orderDate = order.orderDate.minusDays(1)))
-      OrderRepository.ofJDBC.findById(id) match {
-        case Success(newOrder) => newOrder.orderDate shouldBe order.orderDate.minusDays(1)
-        case Failure(e) => fail(s"Cannot find by id", e)
+      OrderRepository.ofJDBC.save(order.copy(
+        orderDate = order.orderDate.minusDays(1),
+        details = order.details.map(_.copy(qty = 2))
+      ))
+      OrderRepository.ofJDBC.findById(orderId) match {
+        case Success(newOrder) =>
+          newOrder.orderDate shouldBe order.orderDate.minusDays(1)
+          newOrder.details(0).qty shouldBe 2
+        case Failure(e) => fail(s"Cannot find by id: ${e.getMessage}", e)
       }
     }
   }
 
   it should "find a order if exists" in { implicit session =>
     withContext { implicit ctx =>
-      val id = genId
       val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
+      val orderId = OrderId(genId)
+      val orderDetails = Seq(
+        OrderDetail(id = OrderDetailId(genId), orderId = orderId, sku = "SKU001", qty = 1)
+      )
       val order = OrderRepository.ofJDBC.save(
-        Order(OrderId(id), storer, DateTime.now())
+        Order(
+          id = orderId,
+          storer = storer,
+          orderDate = DateTime.now(),
+          details = orderDetails
+        )
       ).success.get
-      val orderTry = OrderRepository.ofJDBC.findById(OrderId(id))
+      val orderTry = OrderRepository.ofJDBC.findById(orderId)
       orderTry.isSuccess shouldBe true
+      orderTry.success.value.details.size shouldBe 1
     }
   }
 
@@ -75,12 +106,20 @@ class OrderRepositoryOnJDBCSpec extends FlatSpec with Matchers with AutoRollback
 
   it should "delete a order if exists" in { implicit session =>
     withContext { implicit ctx =>
-      val id = genId
       val storer = StorerRepository.ofJDBC.findById(StorerId(1)).success.value
+      val orderId = OrderId(genId)
+      val orderDetails = Seq(
+        OrderDetail(id = OrderDetailId(genId), orderId = orderId, sku = "SKU001", qty = 1)
+      )
       val order = OrderRepository.ofJDBC.save(
-        Order(OrderId(id), storer, DateTime.now())
+        Order(
+          id = orderId,
+          storer = storer,
+          orderDate = DateTime.now(),
+          details = orderDetails
+        )
       ).success.get
-      val orderTry = OrderRepository.ofJDBC.deleteById(OrderId(id))
+      val orderTry = OrderRepository.ofJDBC.deleteById(orderId)
       orderTry.isSuccess shouldBe true
     }
   }

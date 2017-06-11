@@ -6,7 +6,8 @@ import org.joda.time.DateTime
 case class Order(
   id: OrderId,
   storer: Storer,
-  orderDate: DateTime
+  orderDate: DateTime,
+  details: Seq[OrderDetail]
 ) extends Entity[OrderId] {
 
   override type This = Order

@@ -1,3 +1,5 @@
+target/
+
 udacity-*/
 my-big-int/
 tfwh/
@@ -6,3 +8,5 @@ hs-think-func/
 scala-text/
 scala-text-db/
 scala-text-message-board/
+sample-play-library/
+sample-play-micropost/

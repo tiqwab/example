@@ -1,0 +1,116 @@
+AWSTemplateFormatVersion: "2010-09-09"
+Parameters:
+    ImageId:
+        # String, Number, etc.
+        Type: "String"
+        Default: "ami-923d12f5"
+    KeyName:
+        Type: "String"
+        Default: "aws-sample-key"
+Mappings:
+    TargetAZ:
+        "ap-northeast-1":
+            default: ["ap-northeast-1a", "ap-northeast-1c"]
+Resources:
+    # --- VPC ---
+    ZabbixOpsVPC:
+        Type: AWS::EC2::VPC
+        Properties:
+            CidrBlock: 10.0.0.0/16
+            EnableDnsSupport: "true"
+            EnableDnsHostnames: "true"
+            InstanceTenancy: default
+            Tags:
+                - Key: Name
+                  Value: ZabbixOpsVPC
+    # --- Subnet ---
+    ZabbixOpsPublicSubnet1a:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1a
+            CidrBlock: 10.0.0.0/24
+            Tags:
+                - Key: Name
+                  Value: ZabbixOpsPublicSubnet1a
+            VpcId: !Ref ZabbixOpsVPC
+    ZabbixOpsPublicSubnet1c:
+        Type: AWS::EC2::Subnet
+        Properties:
+            # MapPublicIpOnLaunch: "false"
+            AvailabilityZone: ap-northeast-1c
+            CidrBlock: 10.0.1.0/24
+            Tags:
+                - Key: Name
+                  Value: ZabbixOpsPublicSubnet1c
+            VpcId: !Ref ZabbixOpsVPC
+    # --- Internet Gateway ---
+    ZabbixOpsIGW:
+        Type: AWS::EC2::InternetGateway
+        Properties:
+            Tags:
+                - Key: Name
+                  Value: ZabbixOpsIGW
+    AttackGateway:
+        Type: AWS::EC2::VPCGatewayAttachment
+        Properties:
+            VpcId: !Ref ZabbixOpsVPC
+            InternetGatewayId: !Ref ZabbixOpsIGW
+    # --- Route Table ---
+    ZabbixOpsPublicRouteTable:
+        Type: AWS::EC2::RouteTable
+        Properties:
+            VpcId: !Ref ZabbixOpsVPC
+            Tags:
+                - Key: Name
+                  Value: ZabbixOpsPublicRouteTable
+    ZabbixOpsPublicRoute:
+        Type: AWS::EC2::Route
+        Properties:
+            RouteTableId: !Ref ZabbixOpsPublicRouteTable
+            DestinationCidrBlock: 0.0.0.0/0
+            GatewayId: !Ref ZabbixOpsIGW
+    AssociateRouteTableToZabbixOpsPublicSubnet1a:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref ZabbixOpsPublicSubnet1a
+            RouteTableId: !Ref ZabbixOpsPublicRouteTable
+    AssociateRouteTableToZabbixOpsPublicSubnet1c:
+        Type: AWS::EC2::SubnetRouteTableAssociation
+        Properties:
+            SubnetId: !Ref ZabbixOpsPublicSubnet1c
+            RouteTableId: !Ref ZabbixOpsPublicRouteTable
+    # --- Security Group ---
+    BaseSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Security group to which all instances belong
+            VpcId: !Ref ZabbixOpsVPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: '22'
+                  ToPort: '22'
+                  CidrIp: 0.0.0.0/0
+            SecurityGroupEgress:
+                - IpProtocol: "-1"
+                  CidrIp: 0.0.0.0/0
+    ZabbixServerSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Security group for zabbix server
+            VpcId: !Ref ZabbixOpsVPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: '80'
+                  ToPort: '80'
+                  CidrIp: 0.0.0.0/0
+    ZabbixAgentSecurityGroup:
+        Type: AWS::EC2::SecurityGroup
+        Properties:
+            GroupDescription: Security group for zabbix agent
+            VpcId: !Ref ZabbixOpsVPC
+            SecurityGroupIngress:
+                - IpProtocol: tcp
+                  FromPort: '10050'
+                  ToPort: '10050'
+                  CidrIp: 0.0.0.0/0

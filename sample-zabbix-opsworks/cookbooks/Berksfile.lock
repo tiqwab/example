@@ -1,0 +1,6 @@
+DEPENDENCIES
+  zabbix-server
+    path: zabbix-server
+
+GRAPH
+  zabbix-server (0.1.0)

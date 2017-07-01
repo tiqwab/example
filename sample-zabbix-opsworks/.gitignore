@@ -4,3 +4,5 @@ bin/*
 
 .kitchen/
 .kitchen.local.yml
+
+.delivery/

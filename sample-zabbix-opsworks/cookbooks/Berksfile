@@ -1,3 +1,4 @@
 source "https://supermarket.chef.io"
 
 cookbook "zabbix-server", path: "./zabbix-server"
+cookbook "zabbix-agent", path: "./zabbix-agent"

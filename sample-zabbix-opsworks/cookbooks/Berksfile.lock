@@ -1,6 +1,9 @@
 DEPENDENCIES
+  zabbix-agent
+    path: zabbix-agent
   zabbix-server
     path: zabbix-server
 
 GRAPH
+  zabbix-agent (0.1.0)
   zabbix-server (0.1.0)

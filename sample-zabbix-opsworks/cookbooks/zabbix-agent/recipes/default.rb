@@ -44,6 +44,6 @@ template '/etc/zabbix/zabbix_agentd.conf' do
 end
 
 # Start and enable zabbix-agent
-# service 'zabbix-agent' do
-#     action [:enable, :start]
-# end
+service 'zabbix-agent' do
+    action [:enable, :start]
+end

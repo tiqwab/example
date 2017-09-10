@@ -1,0 +1,11 @@
+# --- !Ups
+
+CREATE TABLE USERS(
+    id BIGINT PRIMARY KEY NOT NULL,
+    email VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP NOT NULL
+);
+
+# --- !Downs
+
+DROP TABLE USERS;

@@ -1,0 +1,13 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# https://www.playframework.com/documentation/latest/ScalaRouting
+# ~~~~
+
+POST    /signup                     controllers.SecureSampleController.signup()
+GET    /confirmSignup/:tokenId      controllers.SecureSampleController.confirmSignup(tokenId: RegistrationTokenId)
+POST   /login                       controllers.SecureSampleController.login
+GET    /logout                      controllers.SecureSampleController.logout
+GET    /securedContent              controllers.SecureSampleController.securedContent
+
+# Map static resources from the /public folder to the /assets URL path
+GET     /assets/*file               controllers.Assets.versioned(path="/public", file: Asset)

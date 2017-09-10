@@ -35,13 +35,13 @@ libraryDependencies += "com.softwaremill.macwire" %% "util" % versions.macwire
 //TwirlKeys.templateImports += "com.tiqwab.example.controllers._"
 
 // Adds additional packages into conf/routes
-play.sbt.routes.RoutesKeys.routesImport += "models.authentication.RegistrationTokenId"
+play.sbt.routes.RoutesKeys.routesImport ++= Seq(
+  "controllers.CustomQueryStringBindable._",
+  "controllers.CustomPathBindable._",
+  "models.authentication.RegistrationTokenId"
+)
 
 routesGenerator := InjectedRoutesGenerator
 
-play.sbt.routes.RoutesKeys.routesImport ++= Seq(
-  "controllers.CustomQueryStringBindable._",
-  "controllers.CustomPathBindable._"
-)
 
 resolvers += "Atlassian Releases" at "https://maven.atlassian.com/public/"

@@ -36,6 +36,7 @@ lazy val root = (project in file(".")).
       scalaTest % Test
     )
   )
+  .enablePlugins(JavaAppPackaging)
 
 // To execute scalafmt from sbt 0.13
 def latestScalafmt = "1.0.0-RC4"

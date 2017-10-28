@@ -1,6 +1,20 @@
 package com.tiqwab.replication.play.json
 
-sealed trait JsValue
+sealed trait JsValue { self =>
+
+  def \(name: String): JsLookupResult = self match {
+    case json: JsObject =>
+      json.value.find(_._1 == name) match {
+        case Some((_, v)) =>
+          JsDefined(v)
+        case None =>
+          JsUndefined(s"no such element $name")
+      }
+    case _ =>
+      JsUndefined(s"no such element: $name")
+  }
+
+}
 
 case class JsString(value: String) extends JsValue {
   override def toString: String = "\"" + value.toString + "\""

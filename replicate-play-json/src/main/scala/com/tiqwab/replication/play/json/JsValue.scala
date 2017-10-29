@@ -14,6 +14,22 @@ sealed trait JsValue { self =>
       JsUndefined(s"no such element: $name")
   }
 
+  def as[T](implicit reads: Reads[T]): T =
+    reads.reads(self) match {
+      case JsSuccess(v) =>
+        v
+      case JsError(msg) =>
+        throw new IllegalArgumentException(msg.toString)
+    }
+
+  def asOpt[T](implicit reads: Reads[T]): Option[T] =
+    reads.reads(self) match {
+      case JsSuccess(v) =>
+        Some(v)
+      case JsError(_) =>
+        None
+    }
+
 }
 
 case class JsString(value: String) extends JsValue {

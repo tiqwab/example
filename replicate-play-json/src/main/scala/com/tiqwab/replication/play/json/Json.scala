@@ -9,4 +9,7 @@ object Json {
   def toJson[T](obj: T)(implicit writes: Writes[T]): JsValue =
     implicitly[Writes[T]].writes(obj)
 
+  def fromJson[T](json: JsValue)(implicit reads: Reads[T]): T =
+    implicitly[Reads[T]].reads(json).get
+
 }

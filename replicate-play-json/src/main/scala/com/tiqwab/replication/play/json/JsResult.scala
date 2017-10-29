@@ -1,7 +1,19 @@
 package com.tiqwab.replication.play.json
 
-sealed trait JsResult[T] {
+sealed trait JsResult[T] { self =>
   def get: T
+  def map[U](f: T => U): JsResult[U] = self match {
+    case JsSuccess(v) =>
+      JsSuccess(f(v))
+    case JsError(msgs) =>
+      JsError(msgs)
+  }
+  def flatMap[U](f: T => JsResult[U]): JsResult[U] = self match {
+    case JsSuccess(v) =>
+      f(v)
+    case JsError(msgs) =>
+      JsError(msgs)
+  }
 }
 
 case class JsSuccess[T](value: T) extends JsResult[T] {

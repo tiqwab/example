@@ -1,8 +1,24 @@
 package com.tiqwab.replication.play.json
 
-trait Reads[T] {
+trait Reads[T] { self =>
 
   def reads(json: JsValue): JsResult[T]
+
+  def map[U](f: T => U): Reads[U] = Reads { json =>
+    self.reads(json).map(f)
+  }
+
+  def flatMap[U](f: T => Reads[U]): Reads[U] = Reads { json =>
+    self.reads(json) match {
+      case JsSuccess(v) =>
+        f(v).reads(json)
+      case JsError(msgs) =>
+        JsError(msgs)
+    }
+  }
+
+  def and[U, C](another: Reads[U]): ReadsBuilder.CanBuild2[T, U] =
+    ReadsBuilder.CanBuild2(self, another)
 
 }
 

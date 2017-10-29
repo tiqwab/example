@@ -8,7 +8,7 @@ sealed trait JsValue { self =>
         case Some((_, v)) =>
           JsDefined(v)
         case None =>
-          JsUndefined(s"no such element $name")
+          JsUndefined(s"no such element: $name")
       }
     case _ =>
       JsUndefined(s"no such element: $name")

@@ -1,8 +1,11 @@
 package com.tiqwab.replication.play.json
 
-trait Writes[T] {
+trait Writes[T] { self =>
 
   def writes(value: T): JsValue
+
+  def and[U](another: Writes[U]): WritesBuilder.CanBuild2[T, U] =
+    WritesBuilder.CanBuild2(self, another)
 
 }
 

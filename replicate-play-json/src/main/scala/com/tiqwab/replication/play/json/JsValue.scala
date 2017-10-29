@@ -41,9 +41,13 @@ case class JsNumber(value: Double) extends JsValue {
 case class JsBoolean(value: Boolean) extends JsValue {
   override def toString: String = value.toString
 }
-case class JsObject(value: (String, JsValue)*) extends JsValue {
+case class JsObject(value: (String, JsValue)*) extends JsValue { self =>
   override def toString: String =
     "{" + value.map { case (k, v) => "\"" + k.toString + "\"" + ":" + v.toString }.mkString(", ") + "}"
+  def ++(other: JsObject): JsObject = {
+    val newValue = (self.value.toMap ++ other.value.toMap).toSeq
+    JsObject(newValue: _*)
+  }
 }
 case class JsArray(value: JsValue*) extends JsValue {
   override def toString: String = "[" + value.map(_.toString).mkString(", ") + "]"

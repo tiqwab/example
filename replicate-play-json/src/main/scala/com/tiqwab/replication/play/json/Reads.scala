@@ -34,9 +34,15 @@ object Reads {
     case x =>
       JsError(Seq(s"$x cannot be read to String"))
   }
+  implicit def intReads: Reads[Int] = Reads {
+    case JsNumber(v) =>
+      JsSuccess(v.intValue())
+    case x =>
+      JsError(Seq(s"$x cannot be read to Int"))
+  }
   implicit def doubleReads: Reads[Double] = Reads {
     case JsNumber(v) =>
-      JsSuccess(v)
+      JsSuccess(v.doubleValue())
     case x =>
       JsError(Seq(s"$x cannot be read to Double"))
   }

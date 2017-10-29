@@ -35,7 +35,7 @@ sealed trait JsValue { self =>
 case class JsString(value: String) extends JsValue {
   override def toString: String = "\"" + value.toString + "\""
 }
-case class JsNumber(value: Double) extends JsValue {
+case class JsNumber(value: Number) extends JsValue {
   override def toString: String = value.toString
 }
 case class JsBoolean(value: Boolean) extends JsValue {
@@ -59,6 +59,7 @@ case object JsNull extends JsValue {
 object JsValue {
 
   implicit def stringToJsString(value: String): JsString = JsString(value)
+  implicit def intToJsNumber(value: Int): JsNumber = JsNumber(value)
   implicit def doubleToJsNumber(value: Double): JsNumber = JsNumber(value)
   implicit def booleanToJsBoolean(value: Boolean): JsBoolean = JsBoolean(value)
   // FIXME: Seq(1, 2) -> JsArray(JsNumber(1), JsNumber(2)) のような変換はこれではできない　

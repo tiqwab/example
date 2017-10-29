@@ -18,6 +18,9 @@ object Writes {
   implicit def stringWrites: Writes[String] = Writes { x =>
     JsString(x)
   }
+  implicit def intWrites: Writes[Int] = Writes { x =>
+    JsNumber(x)
+  }
   implicit def doubleWrites: Writes[Double] = Writes { x =>
     JsNumber(x)
   }

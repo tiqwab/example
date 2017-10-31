@@ -6,10 +6,10 @@ object Json {
   def obj(value: (String, JsValue)*): JsObject = JsObject(value: _*)
   def arr(value: JsValue*): JsArray = JsArray(value: _*)
 
-  def toJson[T](obj: T)(implicit writes: Writes[T]): JsValue =
+  def toJson[T: Writes](obj: T): JsValue =
     implicitly[Writes[T]].writes(obj)
 
-  def fromJson[T](json: JsValue)(implicit reads: Reads[T]): T =
+  def fromJson[T: Reads](json: JsValue): T =
     implicitly[Reads[T]].reads(json).get
 
 }

@@ -28,7 +28,7 @@ object Writes {
     JsBoolean(x)
   }
   implicit def seqWrites[T: Writes]: Writes[Seq[T]] = Writes { xs =>
-    xs.map(implicitly[Writes[T]].writes(_))
+    JsArray(xs.map(implicitly[Writes[T]].writes(_)): _*)
   }
 
 }

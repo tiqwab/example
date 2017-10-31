@@ -58,11 +58,7 @@ case object JsNull extends JsValue {
 
 object JsValue {
 
-  implicit def stringToJsString(value: String): JsString = JsString(value)
-  implicit def intToJsNumber(value: Int): JsNumber = JsNumber(value)
-  implicit def doubleToJsNumber(value: Double): JsNumber = JsNumber(value)
-  implicit def booleanToJsBoolean(value: Boolean): JsBoolean = JsBoolean(value)
-  // FIXME: Seq(1, 2) -> JsArray(JsNumber(1), JsNumber(2)) のような変換はこれではできない　
-  implicit def arrayToJsArray(value: Seq[JsValue]): JsArray = JsArray(value: _*)
+  implicit def writesToJsValue[T: Writes](v: T): JsValue =
+    implicitly[Writes[T]].writes(v)
 
 }

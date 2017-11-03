@@ -1,7 +1,7 @@
 package com.tiqwab.replication.play.json
 
 // FIXME: どういうデータ構造がいいんだろう
-// parnet, child ともに持たせるような双方向の依存はあまり好きではないけれど、そうするべきとこか？
+// parnet, child ともに持たせるような双方向の依存にするべき？
 case class JsPath(name: String, parent: Option[JsPath]) { self =>
 
   def \(key: String): JsPath = JsPath(key, Some(self))

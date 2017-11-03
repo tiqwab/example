@@ -57,6 +57,7 @@ case object JsNull extends JsValue {
 }
 
 object JsValue {
+  import scala.language.implicitConversions
 
   implicit def writesToJsValue[T: Writes](v: T): JsValue =
     implicitly[Writes[T]].writes(v)

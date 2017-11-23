@@ -3,6 +3,7 @@ package com.tiqwab.example.akka
 import akka.actor.ActorSystem
 import akka.http.scaladsl.Http
 import akka.stream.ActorMaterializer
+import akka.util.Timeout
 import com.typesafe.config.{Config, ConfigFactory}
 import com.typesafe.scalalogging.LazyLogging
 
@@ -16,12 +17,13 @@ object SimpleServer extends LazyLogging {
     val config: Config = ConfigFactory.load()
     val host = config.getString("http.host")
     val port = config.getInt("http.port")
+    val timeout = config.getInt("http.timeout").seconds
 
     implicit val system: ActorSystem = ActorSystem("simple-system", config)
     implicit val materializer: ActorMaterializer = ActorMaterializer()
     implicit val ec: ExecutionContext = system.dispatcher
 
-    val route = new TopicRoute().routes
+    val route = new TopicRoute(system, Timeout(timeout)).routes
     Http().bindAndHandle(route, host, port).onComplete {
       case Success(binding) =>
         logger.info(s"Server start at ${binding.localAddress}")

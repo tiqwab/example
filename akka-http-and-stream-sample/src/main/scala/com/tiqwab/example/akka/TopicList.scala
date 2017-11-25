@@ -14,6 +14,13 @@ class TopicList extends Actor with ActorLogging {
         newTopic
       })
       topic forward Topic.SaveMessage(body, timestampMillis)
+    case TopicList.GetMessage(topicName, id) =>
+      topicMap.get(topicName) match {
+        case None =>
+          sender() ! None
+        case Some(topic) =>
+          topic forward Topic.GetMessage(id)
+      }
   }
 
 }
@@ -22,4 +29,5 @@ object TopicList {
   def props: Props = Props(new TopicList())
   case class SaveMessage(topic: String, body: String, timestampMillis: Long)
   case class MessageSaved(id: String)
+  case class GetMessage(topic: String, id: String)
 }

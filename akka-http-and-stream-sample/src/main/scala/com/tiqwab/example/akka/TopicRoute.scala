@@ -15,6 +15,7 @@ class TopicRoute(val system: ActorSystem, val timeout: Timeout) extends TopicApi
 
   def routes: Route =
     pathPrefix("topic" / Segment) { topicName =>
+      // POST /topic/:name
       post {
         entity(as[SaveMessageRequest]) { request =>
           onComplete(saveMessage(topicName, request)) {
@@ -25,7 +26,24 @@ class TopicRoute(val system: ActorSystem, val timeout: Timeout) extends TopicApi
               complete(InternalServerError)
           }
         }
-      }
+      } ~
+        path(Segment) { id =>
+          // GET /topic/:name/:id
+          get {
+            onComplete(getMessage(topicName, id)) {
+              case Success(messageOpt) =>
+                messageOpt match {
+                  case None =>
+                    complete(NotFound)
+                  case Some(message) =>
+                    complete((OK, message))
+                }
+              case Failure(e) =>
+                logger.error("Error occurred while saving message", e)
+                complete(InternalServerError)
+            }
+          }
+        }
     }
 
 }

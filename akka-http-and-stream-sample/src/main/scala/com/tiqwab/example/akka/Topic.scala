@@ -12,10 +12,13 @@ class Topic(val topicName: String) extends Actor with ActorLogging {
       val message = Message(id, body, timestampMillis)
       messages = messages :+ message
       sender() ! message
+    case Topic.GetMessage(id) =>
+      sender() ! messages.find(_.id == id)
   }
 }
 
 object Topic {
   def props(topicName: String): Props = Props(new Topic(topicName))
   case class SaveMessage(body: String, timestampMillis: Long)
+  case class GetMessage(id: String)
 }

@@ -16,7 +16,8 @@ trait TopicApi {
   def saveMessage(topicName: String, request: SaveMessageRequest): Future[Message] =
     (topicList ? TopicList.SaveMessage(topicName, request.body, request.timestampMillis)).mapTo[Message]
 
-  def getMessage(topic: String, id: String): Future[Option[Message]] = ???
+  def getMessage(topic: String, id: String): Future[Option[Message]] =
+    (topicList ? TopicList.GetMessage(topic, id)).mapTo[Option[Message]]
 
   def listMessage(topic: String): Future[Seq[Message]] = ???
 

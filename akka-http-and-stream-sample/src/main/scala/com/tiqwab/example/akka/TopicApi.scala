@@ -19,6 +19,7 @@ trait TopicApi {
   def getMessage(topic: String, id: String): Future[Option[Message]] =
     (topicList ? TopicList.GetMessage(topic, id)).mapTo[Option[Message]]
 
-  def listMessage(topic: String): Future[Seq[Message]] = ???
+  def listMessage(topic: String): Future[Option[Seq[Message]]] =
+    (topicList ? TopicList.ListMessage(topic)).mapTo[Option[Seq[Message]]]
 
 }

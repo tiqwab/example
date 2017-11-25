@@ -14,6 +14,9 @@ class Topic(val topicName: String) extends Actor with ActorLogging {
       sender() ! message
     case Topic.GetMessage(id) =>
       sender() ! messages.find(_.id == id)
+    case Topic.ListMessage =>
+      // 単体で見ると Some で包む必要は無いが、TopicList からの使われ方の関係で
+      sender() ! Some(messages)
   }
 }
 
@@ -21,4 +24,5 @@ object Topic {
   def props(topicName: String): Props = Props(new Topic(topicName))
   case class SaveMessage(body: String, timestampMillis: Long)
   case class GetMessage(id: String)
+  case object ListMessage
 }

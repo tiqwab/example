@@ -43,6 +43,23 @@ class TopicRoute(val system: ActorSystem, val timeout: Timeout) extends TopicApi
                 complete(InternalServerError)
             }
           }
+        } ~
+        pathEndOrSingleSlash {
+          // GET /topic/:name
+          get {
+            onComplete(listMessage(topicName)) {
+              case Success(messagesOpt) =>
+                messagesOpt match {
+                  case None =>
+                    complete(NotFound)
+                  case Some(messages) =>
+                    complete((OK, ListMessageResponse(messages)))
+                }
+              case Failure(e) =>
+                logger.error("Error occurred while saving message", e)
+                complete(InternalServerError)
+            }
+          }
         }
     }
 

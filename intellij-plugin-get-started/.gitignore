@@ -1,0 +1,7 @@
+# Ref. https://github.com/JetBrains/ideavim/blob/master/.gitignore
+*.swp
+/.gradle/
+/.idea/
+/build/
+/out/
+/tmp/

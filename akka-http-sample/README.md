@@ -1,3 +1,11 @@
+Sample code of akka-http.
+
+### Start server
+
+```
+$ sbt run
+```
+
 ### Store Messages
 
 `POST /topics/:name`

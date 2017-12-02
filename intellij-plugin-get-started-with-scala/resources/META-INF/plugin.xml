@@ -1,18 +1,14 @@
 <idea-plugin>
-  <id>com.github.tiqwab.altenterplus</id>
+  <id>com.github.tiqwab.sampleintellijplugin</id>
   <name>Alt Enter Plus</name>
   <version>0.1.0</version>
   <vendor email="tiqwab.ch90@gmail.com" url="https://github.com/tiqwab">tiqwab</vendor>
 
   <description><![CDATA[
-      All you need is Alt+Enter.
+      This is sample.
     ]]></description>
 
   <change-notes><![CDATA[
-      <p>0.1.0</p>
-      <ul>
-        <li>Enable to 'Rename'</li>
-      </ul>
     ]]>
   </change-notes>
 
@@ -28,25 +24,19 @@
   <extensions defaultExtensionNs="com.intellij">
     <!-- Add your extensions here -->
     <intentionAction>
-      <className>com.tiqwab.intellij.EchoIntentionAction</className>
-    </intentionAction>
-    <intentionAction>
-      <className>com.tiqwab.intellij.RenameIntentionAction</className>
-    </intentionAction>
-    <intentionAction>
       <className>com.tiqwab.intellij.HelloIntentionAction</className>
     </intentionAction>
   </extensions>
 
   <actions>
     <!-- Add your actions here -->
-    <group id="MyPlugin.EchoMenu" text="_Echo" description="Echo message">
+    <group id="MyPlugin.CustomMenu" text="_Custom" description="Custom Menu">
       <add-to-group group-id="MainMenu" anchor="last"/>
       <action id="MyAction.Hello" class="com.tiqwab.intellij.HelloAction" text="Hello"
               description="Hello Action">
       </action>
-      <action id="MyAction.TellElemen" class="com.tiqwab.intellij.TellElementAction" text="TellElement"
-              description="Tell element at the current caret">
+      <action id="MyAction.DelegateSample" class="com.tiqwab.intellij.DelegateSampleAction" text="RenameElement"
+              description="Rename element at the current caret">
         <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt k"/>
       </action>
     </group>

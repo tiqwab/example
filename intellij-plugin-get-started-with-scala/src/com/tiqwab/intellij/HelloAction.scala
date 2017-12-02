@@ -3,6 +3,9 @@ package com.tiqwab.intellij
 import com.intellij.openapi.actionSystem.{AnAction, AnActionEvent}
 import com.intellij.openapi.ui.Messages
 
+/**
+  * This is sample of AnAction
+  */
 class HelloAction extends AnAction {
   override def actionPerformed(e: AnActionEvent): Unit = {
     val project = e.getProject

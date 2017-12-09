@@ -30,6 +30,8 @@
 
   <actions>
     <!-- Add your actions here -->
+
+    <!-- Menu action settings -->
     <group id="MyPlugin.CustomMenu" text="_Custom" description="Custom Menu">
       <add-to-group group-id="MainMenu" anchor="last"/>
       <action id="MyAction.Hello" class="com.tiqwab.intellij.HelloAction" text="Hello"
@@ -40,6 +42,11 @@
         <keyboard-shortcut keymap="$default" first-keystroke="ctrl alt k"/>
       </action>
     </group>
+
+    <!-- Popup menu settings -->
+    <action id="MyAction.PopupHello" class="com.tiqwab.intellij.PopupHelloAction" text="HelloPopup" description="Hello Popup Action">
+      <add-to-group group-id="EditorPopupMenu" />
+    </action>
   </actions>
 
 </idea-plugin>

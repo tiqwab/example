@@ -8,9 +8,9 @@ import scala.concurrent.ExecutionContext.Implicits._
 
 class PauseTest extends FunSuite {
 
-  test("retry without interval") {
+  test("retry with Pause") {
     var count = 3
-    val pause = Pause(3, 5.seconds)
+    val pause = Pause(3, 2.seconds)
     val f = () =>
       Future {
         count = count - 1
@@ -21,8 +21,11 @@ class PauseTest extends FunSuite {
         }
     }
 
+    val startMillis = System.currentTimeMillis
     val result = Await.result(pause(f), Duration.Inf)
+    val endMillis = System.currentTimeMillis
     assert(result === "OK")
+    assert(endMillis - startMillis > 4000)
   }
 
 }

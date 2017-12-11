@@ -1,5 +1,7 @@
 package com.tiqwab.replicate.retry
 
+import odelay.Timer.default
+
 import scala.concurrent.{ExecutionContext, Future}
 import scala.concurrent.duration._
 
@@ -12,9 +14,11 @@ case class Pause(count: Int, duration: FiniteDuration) {
         case e if remains <= 0 =>
           Future.failed(e)
         case _ =>
-          loop(g, remains - 1)
+          odelay.Delay(duration)(()).future.flatMap { _ =>
+            loop(g, remains - 1)
+          }
       }
-    loop(f, count)
+    loop(f, count - 1)
   }
 
 }

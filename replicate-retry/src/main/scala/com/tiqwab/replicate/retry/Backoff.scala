@@ -8,19 +8,31 @@ case class Backoff(max: Int, delay: FiniteDuration, base: Long = 2L) extends Pol
 
   def timer: Timer = DefaultTimer
 
-  def apply[T](f: () => Future[T])(implicit ec: ExecutionContext): Future[T] = {
+  def apply[T](f: () => Future[T])(implicit success: Success[T], ec: ExecutionContext): Future[T] = {
     def calcDuration(duration: FiniteDuration): FiniteDuration =
       duration * base
-    def loop[T](g: () => Future[T], remains: Int, currentDuration: FiniteDuration): Future[T] =
-      g().recoverWith {
-        case e if remains <= 0 =>
-          Future.failed(e)
-        case _ =>
-          timer.delay(currentDuration).flatMap { _ =>
-            val nextDuration = calcDuration(currentDuration)
-            loop(g, remains - 1, nextDuration)
-          }
-      }
+    def loop(g: () => Future[T], remains: Int, currentDuration: FiniteDuration): Future[T] =
+      g()
+        .flatMap {
+          case x if success.predicate(x) =>
+            Future.successful(x)
+          case x if remains <= 0 =>
+            Future.successful(x)
+          case _ =>
+            timer.delay(currentDuration).flatMap { _ =>
+              val nextDuration = calcDuration(currentDuration)
+              loop(g, remains - 1, nextDuration)
+            }
+        }
+        .recoverWith {
+          case e if remains <= 0 =>
+            Future.failed(e)
+          case _ =>
+            timer.delay(currentDuration).flatMap { _ =>
+              val nextDuration = calcDuration(currentDuration)
+              loop(g, remains - 1, nextDuration)
+            }
+        }
     loop(f, max - 1, delay)
   }
 }

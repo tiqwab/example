@@ -2,6 +2,7 @@ package com.tiqwab.replicate.retry
 
 import scala.concurrent.duration.FiniteDuration
 import scala.concurrent.{ExecutionContext, Future}
+import scala.util.control.NonFatal
 
 trait Policy {
   def timer: Timer
@@ -23,9 +24,7 @@ trait Policy {
             }
         }
         .recoverWith {
-          case e if remains <= 0 =>
-            Future.failed(e)
-          case _ =>
+          case NonFatal(_) if remains > 0 =>
             timer.delay(delayDuration).flatMap { _ =>
               val nextDuration = calcDuration(delayDuration)
               loop(g, remains - 1, nextDuration)

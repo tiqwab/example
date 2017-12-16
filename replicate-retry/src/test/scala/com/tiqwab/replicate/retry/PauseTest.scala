@@ -25,6 +25,7 @@ class PauseTest extends FunSuite {
     val startMillis = System.currentTimeMillis
     val result = Await.result(pause(f), Duration.Inf)
     val endMillis = System.currentTimeMillis
+    assert(count === 0)
     assert(result === "OK")
     assert(endMillis - startMillis > 4000)
   }

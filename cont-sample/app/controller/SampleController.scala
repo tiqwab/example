@@ -13,6 +13,7 @@ class SampleController(cc: ControllerComponents) extends AbstractController(cc) 
 
   implicit val ec: ExecutionContext = defaultExecutionContext
 
+  // e.g. GET /sample1
   def sample1(): Action[AnyContent] = Action.async { (req: Request[AnyContent]) =>
     Future.successful(Ok("ok"))
   }
@@ -64,13 +65,7 @@ object SampleController extends LazyLogging {
     try {
       val resFut = f(conn)
       resFut map { res =>
-        if (is4xx(res) || is5xx(res)) {
-          conn.rollback()
-          res
-        } else {
-          conn.commit()
-          res
-        }
+        if (is4xx(res) || is5xx(res)) { conn.rollback(); res } else { conn.commit(); res }
       }
     } finally {
       conn.close()

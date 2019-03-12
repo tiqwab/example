@@ -1,1 +1,3 @@
 GET     /           controller.HomeController.index
+POST    /sample3    controller.SampleController.editIssue
+

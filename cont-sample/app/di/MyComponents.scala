@@ -20,7 +20,8 @@ class MyApplicationLoader extends ApplicationLoader {
 }
 
 class MyComponents(context: ApplicationLoader.Context)
-  extends BuiltInComponentsFromContext(context) with HttpFiltersComponents with CORSComponents with HomeComponents {
+  extends BuiltInComponentsFromContext(context) with HttpFiltersComponents with CORSComponents with HomeComponents
+  with SampleComponents {
 
   override def httpFilters: Seq[EssentialFilter] =
     super.httpFilters ++ Seq(corsFilter)

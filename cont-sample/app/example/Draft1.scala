@@ -145,6 +145,9 @@ object Draft1 {
         F.flatMap(opt)(x => F.pure(f(x)))
     }
 
+  }
+
+  object ContSample {
     // ref. https://qiita.com/pab_tech/items/fc3d160a96cecdead622
     case class Cont[R, A](run: (A => R) => R) {
       def flatMap[B](f: A => Cont[R, B]): Cont[R, B] =

@@ -26,15 +26,22 @@ object Draft1 {
       JsNumber(BigDecimal(value))
 
     lazy val sample1: JsValue =
-      Json.obj(
-        "name" -> JsString("Alice"),
-        "age" -> JsNumber(BigDecimal("20"))
-      )
+      JsObject(
+        Map(
+          "name" -> JsString("Alice"),
+          "age" -> JsNumber(BigDecimal("20"))
+        ))
 
     lazy val sample2: JsValue =
       Json.obj(
         "name" -> "Alice",
         "age" -> 20
+      )
+
+    lazy val sample3: JsValue =
+      Json.obj(
+        "name" -> stringToJsString("Alice"),
+        "age" -> intToJsNumber(20)
       )
   }
 
@@ -195,5 +202,11 @@ object Draft2 {
 
   case class Address(city: String)
   case class Person2(name: String, age: Int, address: Address)
+
+  val json = Json.parse("""{"name": "Alice", "age": 21}""")
+  val readsSample1 = personReads2.reads(json).get
+
+  val json2 = Json.parse("""{"name": "Alice", "age": 21}""")
+  val str2 = Json.stringify(json2)
 
 }

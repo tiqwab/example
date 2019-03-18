@@ -32,8 +32,8 @@ lazy val commonSettings = Seq(
 )
 
 lazy val versions = new {
-    val playJson = "2.6.13"
-    // val playJson = "2.7.1"
+    val playJson = "2.6.10"
+    // val playJson = "2.7.2"
     val logback = "1.2.3"
     val scalaLogging = "3.9.0"
     val scalaTest = "3.0.5"

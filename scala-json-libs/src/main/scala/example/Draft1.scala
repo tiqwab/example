@@ -166,6 +166,26 @@ object Draft2 {
 
   // ... then change it to a method of JsPath and accept Reads implicitly
 
+  lazy val name4reads
+    : Reads[String] = (JsPath \ "name").read[String](stringReads1) // also accept stringReads implicitly
+
+  case class ReadsCombinator1[A](ra: Reads[A]) {
+    def apply[B](f: A => B): Reads[B] = Reads { json =>
+      ra.reads(json) match {
+        case JsSuccess(a, _) =>
+          JsSuccess(f(a))
+        case _ =>
+          JsError("error")
+      }
+    }
+
+    def ~[B](rb: Reads[B]): ReadsCombinator2[A, B] = ReadsCombinator2(ra, rb)
+  }
+
+  lazy val name5reads: Reads[String] = ReadsCombinator1(
+    (JsPath \ "name").read[String]
+  )(name => name)
+
   case class ReadsCombinator2[A, B](ra: Reads[A], rb: Reads[B]) {
     def apply[C](f: (A, B) => C): Reads[C] = Reads { json =>
       (ra.reads(json), rb.reads(json)) match {
@@ -192,6 +212,11 @@ object Draft2 {
 
   // ... then define ReadsCombinator4, ... ReadsCombinator22
 
+  lazy val personReads3: Reads[Person1] = (
+    ReadsCombinator1((JsPath \ "name").read[String]) ~
+      (JsPath \ "age").read[Int]
+  )((name, age) => Person1(name, age))
+
   lazy val personReads2: Reads[Person1] = ReadsCombinator2(
     (JsPath \ "name").read[String],
     (JsPath \ "age").read[Int]
@@ -208,5 +233,10 @@ object Draft2 {
 
   val json2 = Json.parse("""{"name": "Alice", "age": 21}""")
   val str2 = Json.stringify(json2)
+
+  lazy val personWrites: Writes[Person1] = (
+    (JsPath \ "name").write[String] ~
+      (JsPath \ "age").write[Int]
+  )(person => (person.name, person.age))
 
 }

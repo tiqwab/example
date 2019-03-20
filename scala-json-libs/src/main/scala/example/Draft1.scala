@@ -174,10 +174,13 @@ object Draft2 {
       ra.reads(json) match {
         case JsSuccess(a, _) =>
           JsSuccess(f(a))
-        case _ =>
-          JsError("error")
+        case err @ JsError(_) =>
+          err
       }
     }
+
+    def applyByMap[B](f: A => B): Reads[B] =
+      ra.map(f)
 
     def ~[B](rb: Reads[B]): ReadsCombinator2[A, B] = ReadsCombinator2(ra, rb)
   }
@@ -244,5 +247,26 @@ object Draft2 {
   case class Name(value: String)
   implicit val nameReads: Reads[Name] = play.api.libs.json.Reads.StringReads.map(Name.apply)
   val name2Reads: Reads[Name] = (JsPath \ "name").read[Name]
+}
 
+object Exercise {
+  import play.api.libs.json._
+
+  case class Address(city: String)
+  implicit val addressReads: Reads[Address] = Json.reads[Address]
+  case class Person(name: String, address: Address)
+  implicit val personReads: Reads[Person] = Json.reads[Person]
+
+  val json = Json.parse("""
+      |{
+      |  "name": "Alice",
+      |  "address": {
+      |    "city": "Tokyo"
+      |  }
+      |}
+    """.stripMargin)
+
+  val sample1 = personReads.reads(json)
+
+  case class PersonUpdateRequest(name: String)
 }

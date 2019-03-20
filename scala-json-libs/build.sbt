@@ -34,6 +34,7 @@ lazy val commonSettings = Seq(
 lazy val versions = new {
     val playJson = "2.6.10"
     // val playJson = "2.7.2"
+    val circe = "0.10.0"
     val logback = "1.2.3"
     val scalaLogging = "3.9.0"
     val scalaTest = "3.0.5"
@@ -44,7 +45,12 @@ lazy val root = (project in file("."))
     commonSettings,
     name := "scala-json-libs",
     libraryDependencies ++= Seq(
+      // play-json
       "com.typesafe.play" %% "play-json" % versions.playJson,
+      //circe
+      "io.circe" %% "circe-core" % versions.circe,
+      "io.circe" %% "circe-generic" % versions.circe,
+      "io.circe" %% "circe-parser" % versions.circe,
       "ch.qos.logback" % "logback-classic" % versions.logback,
       "com.typesafe.scala-logging" %% "scala-logging" % versions.scalaLogging,
       "org.scalatest" %% "scalatest" % versions.scalaTest % Test

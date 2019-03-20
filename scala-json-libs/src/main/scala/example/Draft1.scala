@@ -239,4 +239,10 @@ object Draft2 {
       (JsPath \ "age").write[Int]
   )(person => (person.name, person.age))
 
+  Json.obj(("name", "hoge"))
+
+  case class Name(value: String)
+  implicit val nameReads: Reads[Name] = play.api.libs.json.Reads.StringReads.map(Name.apply)
+  val name2Reads: Reads[Name] = (JsPath \ "name").read[Name]
+
 }

@@ -114,3 +114,43 @@ object ImplicitConversion {
     val scalaList: mutable.Buffer[Int] = javaList.asScala
   }
 }
+
+object ImplicitClass {
+
+  implicit class RichInt(value: Int) {
+    def factorial: Int = {
+      def loop(x: Int, acc: Int): Int =
+        if (x <= 0) acc
+        else loop(x - 1, x * acc)
+      loop(value, 1)
+    }
+  }
+
+  val res1: Int = 5.factorial // 120
+
+}
+
+object ImplicitParameterExampleForConnection {
+  case class Person(name: String, age: Int)
+  case class MyConnection()
+  class MyRepository() {
+    def findById(id: Long)(implicit ctx: MyConnection): Option[Person] = ???
+    def create(entity: Person)(implicit ctx: MyConnection): Unit = ???
+  }
+
+  def getConnection(): MyConnection = ???
+
+  val sample1 = {
+    val repo = new MyRepository()
+    val conn: MyConnection = getConnection()
+    repo.findById(1L)(conn)
+    repo.create(Person("Alice", 21))(conn)
+  }
+
+  val sample2 = {
+    val repo = new MyRepository()
+    implicit val conn: MyConnection = getConnection()
+    repo.findById(1L)
+    repo.create(Person("Alice", 21))
+  }
+}

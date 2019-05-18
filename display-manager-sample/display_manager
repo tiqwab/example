@@ -1,0 +1,7 @@
+#%PAM-1.0
+auth		required	pam_debug.so
+auth		required	pam_unix.so
+account		required	pam_debug.so
+account		required	pam_unix.so
+session		required	pam_debug.so
+session		required	pam_unix.so

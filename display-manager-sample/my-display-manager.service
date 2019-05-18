@@ -1,0 +1,9 @@
+[Unit]
+Description=My Display Manager
+After=systemd-user-sessions.service
+
+[Service]
+ExecStart=/usr/local/bin/display_manager_sample
+
+[Install]
+Alias=my-display-manager.service

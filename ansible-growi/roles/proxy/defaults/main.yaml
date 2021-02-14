@@ -1,0 +1,3 @@
+server_ssl_path: "/etc/nginx/ssl"
+server_ssl_key: "{{ server_ssl_path }}/{{ server_domain }}.key"
+server_ssl_crt: "{{ server_ssl_path }}/{{ server_domain }}.crt"

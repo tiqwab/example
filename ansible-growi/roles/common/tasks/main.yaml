@@ -1,0 +1,35 @@
+---
+
+- name: Check target
+  debug:
+    msg: "IPs: {{ ansible_all_ipv4_addresses }}"
+
+- name: Install ntp
+  yum:
+    name:
+      - ntp
+    state: present
+
+- name: Configure ntp
+  template:
+    src: etc/ntp.conf.j2
+    dest: /etc/ntp.conf
+    owner: root
+    group: root
+    mode: 0644
+
+- name: Start ntp
+  service:
+    name: ntpd
+    state: started
+    enabled: yes
+
+- name: Install common packages
+  yum:
+    name:
+      - git
+    state: present
+
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled

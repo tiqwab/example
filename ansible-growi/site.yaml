@@ -1,0 +1,10 @@
+---
+
+- hosts: sample
+  roles:
+    - common
+    - mongodb
+    - elasticsearch
+    - growi
+    - proxy
+  become: True

@@ -1,0 +1,74 @@
+---
+
+### Install Node.js
+
+- name: Check Node.js
+  ansible.builtin.shell: which node
+  register: which_node
+  failed_when: False
+
+- name: Setup Node.js
+  block:
+    - name: Download Node.js installation script
+      ansible.builtin.get_url:
+        url: https://rpm.nodesource.com/setup_{{ node_version }}.x
+        dest: /tmp/nodesource_setup.sh
+        mode: '0755'
+
+    - name: Execute Node.js installation script
+      ansible.builtin.shell: bash /tmp/nodesource_setup.sh
+
+    - name: Install Node.js
+      yum:
+        name: nodejs
+        state: present
+  when: which_node.rc != 0
+
+### Install yarn
+
+- name: Check yarn
+  ansible.builtin.shell: which yarn
+  register: which_yarn
+  failed_when: False
+
+- name: Setup yarn
+  block:
+    - name: Setup repository
+      ansible.builtin.get_url:
+        url: https://dl.yarnpkg.com/rpm/yarn.repo
+        dest: /etc/yum.repos.d/yarn.repo
+        mode: '0644'
+
+    - name: Install yarn
+      yum:
+        name: yarn
+        state: present
+  when: which_yarn.rc != 0
+
+### Install Growi
+
+- name: Clone Growi repository
+  ansible.builtin.git:
+    repo: "https://github.com/weseek/growi"
+    dest: "/opt/growi"
+    version: "{{ growi_version }}"
+
+# It always returns 'changed' without specifying `name`
+- name: Install necessary packages for Growi
+  community.general.yarn:
+    path: "/opt/growi"
+    state: present
+
+- name: Add systemd unit file for Growi
+  template:
+    src: etc/systemd/system/growi.service
+    dest: /etc/systemd/system/growi.service
+    owner: root
+    group: root
+    mode: '0755'
+
+- name: Start Growi
+  service:
+    name: growi
+    state: started
+    enabled: yes

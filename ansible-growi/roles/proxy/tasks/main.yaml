@@ -1,0 +1,55 @@
+---
+
+- name: Setup Nginx repository
+  ansible.builtin.template:
+    src: etc/yum.repos.d/nginx.repo
+    dest: /etc/yum.repos.d/nginx.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Nginx
+  ansible.builtin.yum:
+    name: nginx
+    enablerepo: nginx
+    state: present
+
+### Add a certificate for dev use
+
+- name: Create directory for certificate
+  ansible.builtin.file:
+    path: "{{ server_ssl_path }}"
+    state: directory
+
+- name: Add ssl key
+  ansible.builtin.template:
+    src: "{{ ssl_key }}"
+    dest: "{{ server_ssl_key }}"
+    owner: root
+    group: root
+    mode: '0400'
+  notify: Restart Nginx
+
+- name: Add ssl certificate
+  ansible.builtin.template:
+    src: "{{ ssl_crt }}"
+    dest: "{{ server_ssl_crt }}"
+    owner: root
+    group: root
+    mode: '0444'
+  notify: Restart Nginx
+
+- name: Add Nginx conf
+  ansible.builtin.template:
+    src: etc/nginx/conf.d/growi.conf
+    dest: /etc/nginx/conf.d/growi.conf
+    owner: root
+    group: root
+    mode: '0644'
+  notify: Restart Nginx
+
+- name: Start Nginx
+  ansible.builtin.service:
+    name: nginx
+    state: started
+    enabled: yes

@@ -1,0 +1,28 @@
+---
+
+- name: Check MongoDB
+  ansible.builtin.shell: which mongod
+  register: which_mongod
+  failed_when: False
+
+- name: Setup MongoDB
+  block:
+    - name: Setup MongoDB repository
+      ansible.builtin.template:
+        src: etc/yum.repos.d/mongodb-org.repo
+        dest: /etc/yum.repos.d/mongodb-org-{{ mongodb_version }}.repo
+        owner: root
+        group: root
+        mode: '0644'
+
+    - name: Install MongoDB
+      yum:
+        name: mongodb-org
+        state: present
+  when: which_mongod.rc != 0
+
+- name: Start MongoDB
+  service:
+    name: mongod
+    state: started
+    enabled: yes

@@ -1,0 +1,36 @@
+---
+
+- name: Install OpenJDK8
+  yum:
+    name: java-1.8.0-openjdk
+    state: present
+
+- name: Setup Elasticsearch repository
+  ansible.builtin.template:
+    src: etc/yum.repos.d/elasticsearch.repo
+    dest: /etc/yum.repos.d/elasticsearch-{{ elasticsearch_version }}.repo
+    owner: root
+    group: root
+    mode: '0644'
+
+- name: Install Elasticsearch
+  yum:
+    name: elasticsearch
+    enablerepo: elasticsearch-{{ elasticsearch_version }}
+    state: present
+
+- name: Install Elasticsearch analysis-kuromoji plugin for Growi
+  community.general.elasticsearch_plugin:
+    name: analysis-kuromoji
+  notify: Restart Elasticsearch
+
+- name: Install Elasticsearch analysis-icu plugin for Growi
+  community.general.elasticsearch_plugin:
+    name: analysis-icu
+  notify: Restart Elasticsearch
+
+- name: Start Elasticsearch
+  service:
+    name: elasticsearch
+    state: started
+    enabled: yes

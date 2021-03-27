@@ -1,2 +1,4 @@
+import example.foo
+
 def hello():
-    print('Hello World')
+    print(foo.greeting())

@@ -1,0 +1,17 @@
+version: '3'
+services:
+  haproxy:
+    build:
+      context: ./haproxy
+
+  client:
+    build:
+      context: ./client
+    entrypoint: tail
+    command:
+      - "-f"
+      - "/dev/null"
+
+  server:
+    build:
+      context: ./server

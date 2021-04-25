@@ -22,8 +22,7 @@ func handleConnection(conn *net.TCPConn) {
 				}
 			}
 			if err == io.EOF {
-				continue
-
+				return
 			}
 			log.Printf("Read: %#v\n", err)
 			return

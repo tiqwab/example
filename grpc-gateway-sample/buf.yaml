@@ -1,0 +1,19 @@
+---
+
+version: v1beta1
+
+build:
+  roots:
+    - helloworld
+    - third-party
+
+lint:
+  use:
+    - DEFAULT
+  ignore:
+    - protoc-gen-openapiv2
+    - google
+
+breaking:
+  use:
+    - FILE

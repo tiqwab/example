@@ -31,9 +31,7 @@ func simple_write(fileName string) error {
 	}
 
 	book := &pb.AddressBook{}
-	for _, p := range pp {
-		book.People = append(book.People, p)
-	}
+	book.People = append(book.People, pp...)
 
 	out, err := proto.Marshal(book)
 	if err != nil {

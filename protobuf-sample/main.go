@@ -2,6 +2,7 @@ package main
 
 import (
 	pb "example.com/protobuf-sample/gen"
+	sub "example.com/protobuf-sample/gen/sub"
 	"fmt"
 	"github.com/golang/protobuf/proto"
 	"io/ioutil"
@@ -11,21 +12,21 @@ import (
 func simple_write(fileName string) error {
 	email := "jdoe@example.com"
 
-	pp := []*pb.Person{
-		&pb.Person{
+	pp := []*sub.Person{
+		&sub.Person{
 			Id:    1234,
 			Name:  "John Doe",
 			Email: &email,
-			Phones: []*pb.Person_PhoneNumber{
-				{Number: "554-4321", Type: pb.Person_HOME},
+			Phones: []*sub.Person_PhoneNumber{
+				{Number: "554-4321", Type: sub.Person_HOME},
 			},
 		},
-		&pb.Person{
+		&sub.Person{
 			Id:    1234,
 			Name:  "John Doe",
 			Email: nil,
-			Phones: []*pb.Person_PhoneNumber{
-				{Number: "554-4321", Type: pb.Person_HOME},
+			Phones: []*sub.Person_PhoneNumber{
+				{Number: "554-4321", Type: sub.Person_HOME},
 			},
 		},
 	}

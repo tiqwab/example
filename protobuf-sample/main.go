@@ -9,17 +9,31 @@ import (
 )
 
 func simple_write(fileName string) error {
-	p := pb.Person{
-		Id:    1234,
-		Name:  "John Doe",
-		Email: "jdoe@example.com",
-		Phones: []*pb.Person_PhoneNumber{
-			{Number: "554-4321", Type: pb.Person_HOME},
+	email := "jdoe@example.com"
+
+	pp := []*pb.Person{
+		&pb.Person{
+			Id:    1234,
+			Name:  "John Doe",
+			Email: &email,
+			Phones: []*pb.Person_PhoneNumber{
+				{Number: "554-4321", Type: pb.Person_HOME},
+			},
+		},
+		&pb.Person{
+			Id:    1234,
+			Name:  "John Doe",
+			Email: nil,
+			Phones: []*pb.Person_PhoneNumber{
+				{Number: "554-4321", Type: pb.Person_HOME},
+			},
 		},
 	}
 
 	book := &pb.AddressBook{}
-	book.People = append(book.People, &p)
+	for _, p := range pp {
+		book.People = append(book.People, p)
+	}
 
 	out, err := proto.Marshal(book)
 	if err != nil {

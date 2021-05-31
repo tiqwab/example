@@ -43,6 +43,15 @@ func (s *server) SayHello(ctx context.Context, in *pb.HelloRequest) (*pb.HelloRe
 	return &pb.HelloReply{Message: "Hello " + in.GetName()}, nil
 }
 
+func (s *server) UseOneOf(ctx context.Context, in *pb.OneOfRequest) (*pb.OneOfRootReply, error) {
+	log.Printf("Received: %v", in.GetName())
+	if in.Name == nil {
+		return &pb.OneOfRootReply{Body: &pb.OneOfRootReply_Reply1{&pb.OneOfSub1Reply{Message: "reply1"}}}, nil
+	} else {
+		return &pb.OneOfRootReply{Body: &pb.OneOfRootReply_Reply2{&pb.OneOfSub2Reply{Message: "reply2"}}}, nil
+	}
+}
+
 func main() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {

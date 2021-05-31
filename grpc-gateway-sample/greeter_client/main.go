@@ -50,9 +50,27 @@ func main() {
 	}
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
-	r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
-	if err != nil {
-		log.Fatalf("could not greet: %v", err)
+	{
+		r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
+		if err != nil {
+			log.Fatalf("could not greet: %v", err)
+		}
+		log.Printf("Greeting: %s", r.GetMessage())
 	}
-	log.Printf("Greeting: %s", r.GetMessage())
+	{
+		for _, s := range []*string{&name, nil} {
+			r, err := c.UseOneOf(ctx, &pb.OneOfRequest{Name: s})
+			if err != nil {
+				log.Fatalf("could not greet: %v", err)
+			}
+			switch body := r.Body.(type) {
+			case *pb.OneOfRootReply_Reply1:
+				log.Printf("nil requested: %T", body)
+			case *pb.OneOfRootReply_Reply2:
+				log.Printf("%s requested: %T", *s, body)
+			default:
+				log.Fatalf("unknown body")
+			}
+		}
+	}
 }

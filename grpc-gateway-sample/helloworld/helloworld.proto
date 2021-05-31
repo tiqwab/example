@@ -33,6 +33,16 @@ service Greeter {
           summary: "Hello"
       };
   }
+
+  rpc UseOneOf (OneOfRequest) returns (OneOfRootReply) {
+      option (google.api.http) = {
+          post: "/v1/oneof"
+          body: "*"
+      };
+      option (grpc.gateway.protoc_gen_openapiv2.options.openapiv2_operation) = {
+          summary: "Use oneOf"
+      };
+  }
 }
 
 // The request message containing the user's name.
@@ -43,4 +53,24 @@ message HelloRequest {
 // The response message containing the greetings
 message HelloReply {
   string message = 1;
+}
+
+// The request message containing the user's name.
+message OneOfRequest {
+  optional string name = 1;
+}
+
+message OneOfRootReply {
+    oneof body {
+        OneOfSub1Reply reply1 = 1;
+        OneOfSub2Reply reply2 = 2;
+    }
+}
+
+message OneOfSub1Reply {
+    string message = 1;
+}
+
+message OneOfSub2Reply {
+    string message = 1;
 }

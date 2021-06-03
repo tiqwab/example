@@ -31,6 +31,10 @@ func run() error {
 	if err != nil {
 		return err
 	}
+	err = gw.RegisterEchoHandlerFromEndpoint(ctx, mux, *grpcServerEndpoint, opts)
+	if err != nil {
+		return err
+	}
 
 	// Start HTTP server (and proxy calls to gRPC server endpoint)
 	glog.Info("server listening at :50050")

@@ -35,6 +35,7 @@ const (
 // server is used to implement helloworld.GreeterServer.
 type server struct {
 	pb.UnimplementedGreeterServer
+	pb.UnimplementedEchoServer
 }
 
 // SayHello implements helloworld.GreeterServer
@@ -52,6 +53,10 @@ func (s *server) UseOneOf(ctx context.Context, in *pb.OneOfRequest) (*pb.OneOfRo
 	}
 }
 
+func (s *server) DoEcho(ctx context.Context, in *pb.EchoRequest) (*pb.EchoReply, error) {
+	return &pb.EchoReply{Message: in.Message}, nil
+}
+
 func main() {
 	lis, err := net.Listen("tcp", port)
 	if err != nil {
@@ -59,6 +64,7 @@ func main() {
 	}
 	s := grpc.NewServer()
 	pb.RegisterGreeterServer(s, &server{})
+	pb.RegisterEchoServer(s, &server{})
 	log.Printf("server listening at %v", lis.Addr())
 	if err := s.Serve(lis); err != nil {
 		log.Fatalf("failed to serve: %v", err)

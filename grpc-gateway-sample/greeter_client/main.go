@@ -41,7 +41,12 @@ func main() {
 		log.Fatalf("did not connect: %v", err)
 	}
 	defer conn.Close()
-	c := pb.NewGreeterClient(conn)
+
+	//
+	// greeter
+	//
+
+	greeter_cli := pb.NewGreeterClient(conn)
 
 	// Contact the server and print out its response.
 	name := defaultName
@@ -51,7 +56,7 @@ func main() {
 	ctx, cancel := context.WithTimeout(context.Background(), time.Second)
 	defer cancel()
 	{
-		r, err := c.SayHello(ctx, &pb.HelloRequest{Name: name})
+		r, err := greeter_cli.SayHello(ctx, &pb.HelloRequest{Name: name})
 		if err != nil {
 			log.Fatalf("could not greet: %v", err)
 		}
@@ -59,7 +64,7 @@ func main() {
 	}
 	{
 		for _, s := range []*string{&name, nil} {
-			r, err := c.UseOneOf(ctx, &pb.OneOfRequest{Name: s})
+			r, err := greeter_cli.UseOneOf(ctx, &pb.OneOfRequest{Name: s})
 			if err != nil {
 				log.Fatalf("could not greet: %v", err)
 			}
@@ -72,5 +77,18 @@ func main() {
 				log.Fatalf("unknown body")
 			}
 		}
+	}
+
+	//
+	// echo
+	//
+
+	echo_cli := pb.NewEchoClient(conn)
+	{
+		r, err := echo_cli.DoEcho(ctx, &pb.EchoRequest{Message: "do echo"})
+		if err != nil {
+			log.Fatalf("could not echo: %v", err)
+		}
+		log.Printf("Echo: %s", r.GetMessage())
 	}
 }

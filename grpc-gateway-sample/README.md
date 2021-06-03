@@ -21,6 +21,14 @@ $ go run sample_client/main.go
 $ curl -H "Content-Type: application/json" http://localhost:50050/v1/hello -d '{"name": "Alice"}'
 ```
 
+`sample_http_server` is a server which handle HTTP requests directly, so it doesn't need gateway.
+
+```
+$ go run sample_http_server/main.go
+
+$ curl -H "Content-Type: application/json" http://localhost:50050/v1/hello -d '{"name": "Alice"}'
+```
+
 ### Directory structure
 
 - `helloworld/`

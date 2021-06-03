@@ -9,13 +9,13 @@ Original code is: https://github.com/grpc/grpc-go/tree/master/examples/helloworl
 $ buf generate
 
 # Run server
-$ go run greeter_server/main.go
+$ go run sample_server/main.go
 
 # Run gateway
-$ go run greeter_gateway/main.go
+$ go run sample_gateway/main.go
 
 # Run client
-$ go run greeter_client/main.go
+$ go run sample_client/main.go
 
 # Send request by HTTP
 $ curl -H "Content-Type: application/json" http://localhost:50050/v1/hello -d '{"name": "Alice"}'

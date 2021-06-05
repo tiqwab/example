@@ -17,3 +17,11 @@ plugins:
       - logtostderr=true
       - paths=source_relative
       - generate_unbound_methods=true
+  - name: openapiv2
+    out: gen
+    opt:
+      - logtostderr=true
+        # - allow_merge
+        # - merge_file_name=controller
+      - include_package_in_tags=true
+      - fqn_for_openapi_name=true

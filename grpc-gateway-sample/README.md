@@ -29,6 +29,14 @@ $ go run sample_http_server/main.go
 $ curl -H "Content-Type: application/json" http://localhost:50050/v1/hello -d '{"name": "Alice"}'
 ```
 
+`buf generate` also generates OpenAPI specs.
+We can use `swagger mixin` if we want to merge the generated specs.
+
+```
+# Use go-swagger https://github.com/go-swagger/go-swagger
+$ find ./gen -name '*.swagger.json' | xargs swagger mixin > controller.swagger.json
+```
+
 ### Directory structure
 
 - `helloworld/`

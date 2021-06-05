@@ -4,7 +4,7 @@ version: v1beta1
 
 build:
   roots:
-    - helloworld
+    - proto
     - third-party
 
 lint:

@@ -1,0 +1,19 @@
+version: '3'
+services:
+  nginx:
+    build:
+      context: ./nginx
+    ports:
+      - "8080:8080"
+    networks:
+      - nginx-redirect
+
+  app:
+    build:
+      context: ./app
+    networks:
+      - nginx-redirect
+
+networks:
+  nginx-redirect:
+    name: 'nginx-redirect'
